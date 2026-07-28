@@ -1,0 +1,38 @@
+#!/bin/sh
+# Guardia: bloquea que datos financieros personales o la API key entren a git.
+#
+# Las instrucciones (AGENTS.md) se pueden ignorar; un hook no. Esto existe porque el
+# repo se comparte y lo van a operar asistentes de IA: la última línea de defensa no
+# puede ser que alguien se acuerde de la regla.
+#
+# Instalar:  git config core.hooksPath hooks     (setup.py lo hace solo)
+
+PROHIBIDOS='^(plan|manual-balances|tx-labels|data|state|wallbit-snapshot)\.json$|^app\.local\.html$|\.key$|^\.env'
+EN_STAGE=$(git diff --cached --name-only)
+MALOS=$(echo "$EN_STAGE" | grep -E "$PROHIBIDOS")
+
+if [ -n "$MALOS" ]; then
+  echo ""
+  echo "  ⛔ COMMIT BLOQUEADO — estos archivos tienen datos personales:"
+  echo "$MALOS" | sed 's/^/       /'
+  echo ""
+  echo "     Sácalos con:  git restore --staged <archivo>"
+  echo "     Deberían estar en .gitignore. Si aparecen acá, alguien usó 'git add -f'."
+  echo ""
+  exit 1
+fi
+
+# Una API key de Wallbit es una cadena larga y opaca. Si aparece uno de estos patrones
+# junto a la palabra key/token, casi seguro es un secreto pegado por error.
+if git diff --cached -U0 | grep -iE '^\+.*(api[_-]?key|secret|token)[^a-z]{0,4}[=:"'"'"' ]+[A-Za-z0-9_\-]{24,}' >/dev/null 2>&1; then
+  echo ""
+  echo "  ⛔ COMMIT BLOQUEADO — parece que estás subiendo una credencial."
+  echo ""
+  git diff --cached -U0 | grep -inE '^\+.*(api[_-]?key|secret|token)[^a-z]{0,4}[=:"'"'"' ]+[A-Za-z0-9_\-]{24,}' | cut -c1-100 | sed 's/^/       /'
+  echo ""
+  echo "     Las credenciales van en ~/.finanzas/wallbit.key, nunca en el repo."
+  echo "     Si es un falso positivo:  git commit --no-verify"
+  echo ""
+  exit 1
+fi
+exit 0

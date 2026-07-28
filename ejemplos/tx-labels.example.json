@@ -1,0 +1,117 @@
+{
+  "_meta": "Memoria de qué fue cada movimiento. La API re-baja las transacciones en cada sync pero NO recuerda la etiqueta: acá sí, por uuid. Copia a ../tx-labels.json.",
+  "updated": "2026-01-01",
+  "_categories": {
+    "_note": "TAXONOMÍA. Los botones que ves en la cola salen de acá, ordenados por lo que más usas. Esta lista es una SEMILLA para arrancar hoy mismo: bórrala, renómbrala y agrégale lo que haga falta — son tus categorías, no las de nadie más. Si un gasto tuyo no encaja en ninguna, eso no es un problema del gasto: falta una categoría. 'fijo': cae en bloque y no cuenta contra el ritmo diario (alquiler, servicios). 'no_consumo' se define aparte, en exclude_from_techo.",
+    "Comida": {
+      "fijo": false,
+      "desc": "Super, mercado, restaurantes, delivery"
+    },
+    "Transporte": {
+      "fijo": false,
+      "desc": "Taxi, combustible, pasajes"
+    },
+    "Salidas": {
+      "fijo": false,
+      "desc": "Bar, cine, salida nocturna"
+    },
+    "Salud": {
+      "fijo": false,
+      "desc": "Farmacia, consultas, gimnasio"
+    },
+    "Hogar": {
+      "fijo": false,
+      "desc": "Cosas de casa, limpieza, reparaciones"
+    },
+    "Ropa/Shopping": {
+      "fijo": false,
+      "desc": "Ropa y objetos personales"
+    },
+    "Servicios": {
+      "fijo": true,
+      "desc": "Luz, agua, internet — caen en bloque"
+    },
+    "Suscripciones": {
+      "fijo": true,
+      "desc": "Apps y servicios mensuales"
+    },
+    "Alquiler": {
+      "fijo": true,
+      "desc": "Renta de vivienda o espacio de trabajo"
+    },
+    "Otros": {
+      "fijo": false,
+      "desc": "Lo que no entra en ninguna. Si se llena, falta una categoría"
+    },
+    "Deuda": {
+      "fijo": false,
+      "desc": "Pago de deuda — no es consumo, sale del techo"
+    },
+    "Colchón": {
+      "fijo": false,
+      "desc": "Aporte al fondo de emergencia — sigue siendo tuyo"
+    },
+    "DCA": {
+      "fijo": false,
+      "desc": "Lo que inviertes — sigue siendo tuyo"
+    }
+  },
+  "exclude_from_techo": [
+    "Deuda",
+    "Colchón",
+    "DCA"
+  ],
+  "_exclude_note": "Categorías que NO son consumo. Pagar una deuda no es 'gastar': si contara, el techo del mes dejaría de significar algo.",
+  "merchant_rules": [
+    {
+      "cat": "Comida",
+      "keys": [
+        "SUPERMERCADO",
+        "MERCADO",
+        "PANADERIA"
+      ]
+    },
+    {
+      "cat": "Transporte",
+      "keys": [
+        "TAXI",
+        "COMBUSTIBLE"
+      ]
+    },
+    {
+      "cat": "Suscripciones",
+      "keys": [
+        "APPLE.COM",
+        "SPOTIFY",
+        "NETFLIX"
+      ]
+    }
+  ],
+  "default_qr_rule": {
+    "enabled": true,
+    "max_bs": 200,
+    "types": [
+      "PAY_QR"
+    ],
+    "cat": "Comida",
+    "_note": "QR chico sin identificar = compra de comida. Evita preguntar por cada pago de 15 Bs."
+  },
+  "labels": {},
+  "addresses": {
+    "_note": "Libreta on-chain. Un envío a tu exchange es AHORRO; uno a otro lado puede ser gasto. Sin esto se ven idénticos. La clave es la dirección tal cual la devuelve la API; los campos son 'name' y 'kind'. kind: inversion (no cuenta como gasto) | consumo (sí cuenta) | entrante (de dónde te llega plata). Mientras una dirección no esté acá, el selftest te avisa: no quiere que muevas plata sin saber a dónde va.",
+    "_ejemplo_borrar_esta_linea": {
+      "name": "Mi exchange",
+      "kind": "inversion"
+    },
+    "_ejemplo_alerta": {
+      "name": "Servicio que decidí dejar",
+      "kind": "consumo",
+      "alerta_si_sale": true,
+      "_note": "alerta_si_sale hace que el selftest FALLE si sale un solo envío a esa dirección. Sirve para convertir una decisión ('no vuelvo a mandar plata acá') en un cable que avisa el mismo día, no en un recordatorio que se olvida. 'cat' es opcional: la categoría con la que se registra el gasto — tiene que existir en _categories.",
+      "cat": "Otros"
+    }
+  },
+  "user_transfers": {
+    "_note": "Transferencias a otros usuarios de Wallbit: el motor las resuelve solo (saliente = gasto, entrante = ingreso) mirando quién es el dueño de la cuenta. No hace falta llenar nada acá."
+  }
+}

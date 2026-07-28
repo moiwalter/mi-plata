@@ -1,0 +1,84 @@
+{
+  "_meta": "Fuente de verdad de TU plan. Copia este archivo a ../plan.json y edítalo. plan.json está en .gitignore: nunca se sube.",
+  "updated": "2026-01-01",
+  "income_monthly_usd": 2000,
+  "payday": 1,
+  "_payday": "Día del mes en que cobras. El ciclo va de ese día al mismo día del mes siguiente.",
+  "debt": {
+    "total_original_usd": 1500,
+    "interest": "0%",
+    "creditors": [
+      {
+        "name": "Préstamo familiar",
+        "amount": 1000,
+        "paid": false
+      },
+      {
+        "name": "Tarjeta",
+        "amount": 500,
+        "paid": true
+      }
+    ]
+  },
+  "colchon": {
+    "meta_usd": 6000,
+    "rail": "Cuenta de ahorro en USD"
+  },
+  "dca": {
+    "split": {
+      "btc": 0.5,
+      "index": 0.5
+    },
+    "btc_rail": "Exchange",
+    "index_rail": "Wallbit (SPY)",
+    "note": "Cómo repartes lo que inviertes cada mes."
+  },
+  "plan_by_payday": [
+    {
+      "month": "2026-02",
+      "colchon": 400,
+      "deuda": 300,
+      "dca": 200
+    },
+    {
+      "month": "2026-03",
+      "colchon": 400,
+      "deuda": 300,
+      "dca": 200
+    }
+  ],
+  "milestones": {
+    "debt_zero": "2026-06-01",
+    "colchon_done": "2026-12-01",
+    "dca_full": "2027-01-01"
+  },
+  "budget": {
+    "_note": "DOS BALDES. Los fijos caen en bloque (alquiler, servicios) y NO cuentan al ritmo diario. El balde diario es el único número a vigilar. techo = fijos + variable, SIEMPRE.",
+    "techo_total_bs": 8000,
+    "techo_diario_bs": 133,
+    "fijos_total_bs": 4000,
+    "variables_total_bs": 4000,
+    "fijos_bs": {
+      "Alquiler": 2000,
+      "Servicios": 600,
+      "Internet": 400,
+      "Suscripciones": 600,
+      "Gimnasio": 400
+    },
+    "fijos_match": {
+      "_note": "Texto que aparece en el comercio -> a qué fijo corresponde. Sirve para que el motor lo reconozca solo.",
+      "INMOBILIARIA": "Alquiler",
+      "GIMNASIO": "Gimnasio"
+    },
+    "variables_bs": {
+      "Comida": 2200,
+      "Transporte": 800,
+      "Salidas": 600,
+      "Otros": 400
+    },
+    "restriccion_real": {
+      "_note": "Lo calcula el motor: cuánto queda de verdad tras deuda y fijos pendientes.",
+      "fijos_pendientes_bs": 0
+    }
+  }
+}

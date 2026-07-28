@@ -1,0 +1,33 @@
+# ══════════════════════════════════════════════════════════════════
+#  TUS DATOS NUNCA SE SUBEN
+#  Todo lo que describe tu plata real vive acá y queda fuera de git.
+#  Lo único que se versiona es el CÓDIGO y el ejemplo (demo.json).
+# ══════════════════════════════════════════════════════════════════
+
+# --- llaves y credenciales ---
+*.key
+.env
+.env.*
+secrets*
+
+# --- tu configuración real (los .example.json sí se versionan) ---
+plan.json
+manual-balances.json
+tx-labels.json
+data.json
+
+# --- todo lo que produce el motor con tus cifras ---
+state.json
+wallbit-snapshot.json
+app.local.html
+*.local.json
+
+# --- sistema ---
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# atajo generado por el instalador
+actualizar.sh

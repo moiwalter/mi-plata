@@ -1,0 +1,1155 @@
+{
+ "generado": "2026-07-28T09:00:00-04:00",
+ "demo": true,
+ "hoy": "2026-07-28",
+ "sincronizado": "2026-07-28T13:00:00+00:00",
+ "fx": 7.0,
+ "fx_api": 7.0,
+ "fx_fuente": "efectiva QR 3d",
+ "ciclo": {
+  "inicio": "2026-07-17",
+  "fin": "2026-08-17",
+  "dia": 12,
+  "largo": 31,
+  "dias_al_pago": 20
+ },
+ "presupuesto": {
+  "techo": 8000,
+  "fijos": 4000,
+  "diario_total": 4000,
+  "diario_gastado": 1900.22,
+  "fijos_detalle": {
+   "Alquiler": 2000,
+   "Servicios": 600,
+   "Internet": 400,
+   "Suscripciones": 600,
+   "Gimnasio": 400
+  },
+  "gasto_real_medido": 9200,
+  "gasto_real_neto": 8600
+ },
+ "caja": {
+  "gastable_usd": 1850.0,
+  "total_liquido_usd": 2650.0,
+  "libre_bs": 5950.0,
+  "fijos_pendientes_bs": 0,
+  "dias_restantes": 20,
+  "diario_a_cero": 297.5,
+  "retiros_sin_identificar": [
+   {
+    "fecha": "2026-07-20",
+    "bs": 1050.0,
+    "usd": 150.0
+   },
+   {
+    "fecha": "2026-07-28",
+    "bs": 2100.0,
+    "usd": 300.0
+   }
+  ],
+  "retirado_sin_identificar_bs": 3150.0
+ },
+ "pendientes": [
+  {
+   "uuid": "demo-0160",
+   "fecha": "2026-07-28",
+   "hora": "19:42",
+   "nombre": "Retiro a tu banco",
+   "banco": "Banco Union",
+   "metodo": "Retiro",
+   "tipo": "WITHDRAWAL_LOCAL",
+   "bs": 2100.0,
+   "usd": 300.0,
+   "detalle": "Sacaste dólares a tu banco. Wallbit ve que salieron, no en qué terminaron."
+  },
+  {
+   "uuid": "demo-0139",
+   "fecha": "2026-07-24",
+   "hora": "15:10",
+   "nombre": "Transfer → Juan Carlos Flores",
+   "banco": "",
+   "metodo": "Transferencia",
+   "tipo": "USER_TRANSFER",
+   "bs": 175.0,
+   "usd": 25.0,
+   "detalle": "transfer → Juan Carlos Flores"
+  },
+  {
+   "uuid": "demo-0123",
+   "fecha": "2026-07-20",
+   "hora": "19:42",
+   "nombre": "Retiro a tu banco",
+   "banco": "Banco Union",
+   "metodo": "Retiro",
+   "tipo": "WITHDRAWAL_LOCAL",
+   "bs": 1050.0,
+   "usd": 150.0,
+   "detalle": "Sacaste dólares a tu banco. Wallbit ve que salieron, no en qué terminaron."
+  }
+ ],
+ "pendiente_bs": 3325.0,
+ "taxonomia": [
+  {
+   "nombre": "Comida",
+   "fijo": false,
+   "desc": "Super, mercado, restaurantes, delivery",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Transporte",
+   "fijo": false,
+   "desc": "Taxi, combustible, pasajes",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Salidas",
+   "fijo": false,
+   "desc": "Bar, cine, salida nocturna",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Salud",
+   "fijo": false,
+   "desc": "Farmacia, consultas, gimnasio",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Hogar",
+   "fijo": false,
+   "desc": "Cosas de casa, limpieza, reparaciones",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Ropa/Shopping",
+   "fijo": false,
+   "desc": "Ropa y objetos personales",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Servicios",
+   "fijo": true,
+   "desc": "Luz, agua, internet — caen en bloque",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Suscripciones",
+   "fijo": true,
+   "desc": "Apps y servicios mensuales",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Alquiler",
+   "fijo": true,
+   "desc": "Renta de vivienda o espacio de trabajo",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Otros",
+   "fijo": false,
+   "desc": "Lo que no entra en ninguna",
+   "usos": 0,
+   "no_consumo": false
+  },
+  {
+   "nombre": "Deuda",
+   "fijo": false,
+   "desc": "Pago de deuda — no es consumo",
+   "usos": 0,
+   "no_consumo": true
+  },
+  {
+   "nombre": "Colchón",
+   "fijo": false,
+   "desc": "Aporte al fondo de emergencia",
+   "usos": 0,
+   "no_consumo": true
+  },
+  {
+   "nombre": "DCA",
+   "fijo": false,
+   "desc": "Lo que inviertes",
+   "usos": 0,
+   "no_consumo": true
+  }
+ ],
+ "auto_clasificados": {
+  "n": 0,
+  "bs": 0,
+  "cat": "Comida",
+  "max_bs": 200
+ },
+ "movimientos": [
+  {
+   "uuid": "demo-0158",
+   "fecha": "2026-07-28",
+   "hora": "11:09",
+   "nombre": "Restaurante el Patio",
+   "banco": "Banco Sol",
+   "metodo": "QR",
+   "cat": "Salidas",
+   "bs": 140.0,
+   "usd": 20.0,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0159",
+   "fecha": "2026-07-28",
+   "hora": "15:50",
+   "nombre": "Farmacia Bolivia",
+   "banco": "Banco Ganadero",
+   "metodo": "QR",
+   "cat": "Salud",
+   "bs": 110.0,
+   "usd": 15.71,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0153",
+   "fecha": "2026-07-27",
+   "hora": "11:01",
+   "nombre": "Combustible Surtidor 12",
+   "banco": "Banco Bi",
+   "metodo": "QR",
+   "cat": "Transporte",
+   "bs": 100.0,
+   "usd": 14.29,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0156",
+   "fecha": "2026-07-27",
+   "hora": "21:44",
+   "nombre": "Minimarket la Esquina",
+   "banco": "Banco Mercantil",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 65.0,
+   "usd": 9.29,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0151",
+   "fecha": "2026-07-27",
+   "hora": "03:05",
+   "nombre": "Netflix.com",
+   "banco": "",
+   "metodo": "Tarjeta",
+   "cat": "Suscripciones",
+   "bs": 62.93,
+   "usd": 8.99,
+   "auto": false,
+   "fijo": false,
+   "tipo": "CARD_SPENT"
+  },
+  {
+   "uuid": "demo-0155",
+   "fecha": "2026-07-27",
+   "hora": "14:50",
+   "nombre": "Github.com",
+   "banco": "",
+   "metodo": "Tarjeta",
+   "cat": "Suscripciones",
+   "bs": 28.0,
+   "usd": 4.0,
+   "auto": false,
+   "fijo": false,
+   "tipo": "CARD_SPENT"
+  },
+  {
+   "uuid": "demo-0152",
+   "fecha": "2026-07-27",
+   "hora": "10:53",
+   "nombre": "Cafe de la Plaza",
+   "banco": "YAPE",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 23.0,
+   "usd": 3.29,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0146",
+   "fecha": "2026-07-26",
+   "hora": "11:04",
+   "nombre": "Combustible Surtidor 12",
+   "banco": "Banco Bi",
+   "metodo": "QR",
+   "cat": "Transporte",
+   "bs": 140.0,
+   "usd": 20.0,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0147",
+   "fecha": "2026-07-26",
+   "hora": "11:50",
+   "nombre": "Combustible Surtidor 12",
+   "banco": "Banco Bi",
+   "metodo": "QR",
+   "cat": "Transporte",
+   "bs": 120.0,
+   "usd": 17.14,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0149",
+   "fecha": "2026-07-26",
+   "hora": "18:45",
+   "nombre": "Lavanderia Express",
+   "banco": "Banco Bi",
+   "metodo": "QR",
+   "cat": "Otros",
+   "bs": 35.0,
+   "usd": 5.0,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0142",
+   "fecha": "2026-07-25",
+   "hora": "09:31",
+   "nombre": "Minimarket la Esquina",
+   "banco": "Banco Mercantil",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 50.0,
+   "usd": 7.14,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0144",
+   "fecha": "2026-07-25",
+   "hora": "22:42",
+   "nombre": "Minimarket la Esquina",
+   "banco": "Banco Mercantil",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 40.0,
+   "usd": 5.71,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0139",
+   "fecha": "2026-07-24",
+   "hora": "15:10",
+   "nombre": "Transfer → Juan Carlos Flores",
+   "banco": "",
+   "metodo": "Transferencia",
+   "cat": "Sin clasificar",
+   "bs": 175.0,
+   "usd": 25.0,
+   "auto": false,
+   "fijo": false,
+   "tipo": "USER_TRANSFER"
+  },
+  {
+   "uuid": "demo-0140",
+   "fecha": "2026-07-24",
+   "hora": "17:23",
+   "nombre": "Minimarket la Esquina",
+   "banco": "Banco Mercantil",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 45.0,
+   "usd": 6.43,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0135",
+   "fecha": "2026-07-23",
+   "hora": "10:57",
+   "nombre": "Cafe de la Plaza",
+   "banco": "YAPE",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 38.0,
+   "usd": 5.43,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0136",
+   "fecha": "2026-07-23",
+   "hora": "14:35",
+   "nombre": "Panaderia San Jorge",
+   "banco": "Banco Union",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 10.0,
+   "usd": 1.43,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0132",
+   "fecha": "2026-07-22",
+   "hora": "15:55",
+   "nombre": "Lavanderia Express",
+   "banco": "Banco Bi",
+   "metodo": "QR",
+   "cat": "Otros",
+   "bs": 50.0,
+   "usd": 7.14,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0131",
+   "fecha": "2026-07-22",
+   "hora": "13:10",
+   "nombre": "Taxi Centro",
+   "banco": "",
+   "metodo": "QR",
+   "cat": "Transporte",
+   "bs": 25.0,
+   "usd": 3.57,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0126",
+   "fecha": "2026-07-21",
+   "hora": "10:30",
+   "nombre": "Gimnasio Olimpo",
+   "banco": "Banco Sol",
+   "metodo": "QR",
+   "cat": "Salud",
+   "bs": 400.0,
+   "usd": 57.14,
+   "auto": false,
+   "fijo": true,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0127",
+   "fecha": "2026-07-21",
+   "hora": "13:29",
+   "nombre": "Supermercado Central",
+   "banco": "Banco Economico",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 165.0,
+   "usd": 23.57,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0125",
+   "fecha": "2026-07-21",
+   "hora": "07:44",
+   "nombre": "Canva* Pro",
+   "banco": "",
+   "metodo": "Tarjeta",
+   "cat": "Suscripciones",
+   "bs": 90.93,
+   "usd": 12.99,
+   "auto": false,
+   "fijo": false,
+   "tipo": "CARD_SPENT"
+  },
+  {
+   "uuid": "demo-0128",
+   "fecha": "2026-07-21",
+   "hora": "14:21",
+   "nombre": "Panaderia San Jorge",
+   "banco": "Banco Union",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 35.0,
+   "usd": 5.0,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0121",
+   "fecha": "2026-07-20",
+   "hora": "12:30",
+   "nombre": "Restaurante el Patio",
+   "banco": "Banco Sol",
+   "metodo": "QR",
+   "cat": "Salidas",
+   "bs": 60.0,
+   "usd": 8.57,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0120",
+   "fecha": "2026-07-20",
+   "hora": "12:15",
+   "nombre": "Apple.com/bill",
+   "banco": "",
+   "metodo": "Tarjeta",
+   "cat": "Suscripciones",
+   "bs": 20.93,
+   "usd": 2.99,
+   "auto": false,
+   "fijo": false,
+   "tipo": "CARD_SPENT"
+  },
+  {
+   "uuid": "demo-0122",
+   "fecha": "2026-07-20",
+   "hora": "14:06",
+   "nombre": "Cafe de la Plaza",
+   "banco": "YAPE",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 18.0,
+   "usd": 2.57,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0116",
+   "fecha": "2026-07-19",
+   "hora": "10:30",
+   "nombre": "Inmobiliaria Andina",
+   "banco": "Banco Union",
+   "metodo": "QR",
+   "cat": "Sin clasificar",
+   "bs": 2000.0,
+   "usd": 285.71,
+   "auto": false,
+   "fijo": true,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0117",
+   "fecha": "2026-07-19",
+   "hora": "12:18",
+   "nombre": "Farmacia Bolivia",
+   "banco": "Banco Ganadero",
+   "metodo": "QR",
+   "cat": "Salud",
+   "bs": 50.0,
+   "usd": 7.14,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0118",
+   "fecha": "2026-07-19",
+   "hora": "21:58",
+   "nombre": "Panaderia San Jorge",
+   "banco": "Banco Union",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 35.0,
+   "usd": 5.0,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0114",
+   "fecha": "2026-07-18",
+   "hora": "13:35",
+   "nombre": "Restaurante el Patio",
+   "banco": "Banco Sol",
+   "metodo": "QR",
+   "cat": "Salidas",
+   "bs": 105.0,
+   "usd": 15.0,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  },
+  {
+   "uuid": "demo-0113",
+   "fecha": "2026-07-18",
+   "hora": "10:34",
+   "nombre": "Spotify P4x2n9",
+   "banco": "",
+   "metodo": "Tarjeta",
+   "cat": "Suscripciones",
+   "bs": 45.43,
+   "usd": 6.49,
+   "auto": false,
+   "fijo": false,
+   "tipo": "CARD_SPENT"
+  },
+  {
+   "uuid": "demo-0111",
+   "fecha": "2026-07-17",
+   "hora": "11:56",
+   "nombre": "Cafe de la Plaza",
+   "banco": "YAPE",
+   "metodo": "QR",
+   "cat": "Comida",
+   "bs": 18.0,
+   "usd": 2.57,
+   "auto": false,
+   "fijo": false,
+   "tipo": "PAY_QR"
+  }
+ ],
+ "serie": [
+  {
+   "fecha": "2026-07-17",
+   "dia": 1,
+   "gasto": 18.0,
+   "acum": 18.0,
+   "plan": 129.03,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-18",
+   "dia": 2,
+   "gasto": 150.43,
+   "acum": 168.43,
+   "plan": 258.06,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-19",
+   "dia": 3,
+   "gasto": 85.0,
+   "acum": 253.43,
+   "plan": 387.1,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-20",
+   "dia": 4,
+   "gasto": 98.93,
+   "acum": 352.36,
+   "plan": 516.13,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-21",
+   "dia": 5,
+   "gasto": 290.93,
+   "acum": 643.29,
+   "plan": 645.16,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-22",
+   "dia": 6,
+   "gasto": 75.0,
+   "acum": 718.29,
+   "plan": 774.19,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-23",
+   "dia": 7,
+   "gasto": 48.0,
+   "acum": 766.29,
+   "plan": 903.23,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-24",
+   "dia": 8,
+   "gasto": 220.0,
+   "acum": 986.29,
+   "plan": 1032.26,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-25",
+   "dia": 9,
+   "gasto": 90.0,
+   "acum": 1076.29,
+   "plan": 1161.29,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-26",
+   "dia": 10,
+   "gasto": 295.0,
+   "acum": 1371.29,
+   "plan": 1290.32,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-27",
+   "dia": 11,
+   "gasto": 278.93,
+   "acum": 1650.22,
+   "plan": 1419.35,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-28",
+   "dia": 12,
+   "gasto": 250.0,
+   "acum": 1900.22,
+   "plan": 1548.39,
+   "futuro": false
+  },
+  {
+   "fecha": "2026-07-29",
+   "dia": 13,
+   "gasto": null,
+   "acum": null,
+   "plan": 1677.42,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-07-30",
+   "dia": 14,
+   "gasto": null,
+   "acum": null,
+   "plan": 1806.45,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-07-31",
+   "dia": 15,
+   "gasto": null,
+   "acum": null,
+   "plan": 1935.48,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-01",
+   "dia": 16,
+   "gasto": null,
+   "acum": null,
+   "plan": 2064.52,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-02",
+   "dia": 17,
+   "gasto": null,
+   "acum": null,
+   "plan": 2193.55,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-03",
+   "dia": 18,
+   "gasto": null,
+   "acum": null,
+   "plan": 2322.58,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-04",
+   "dia": 19,
+   "gasto": null,
+   "acum": null,
+   "plan": 2451.61,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-05",
+   "dia": 20,
+   "gasto": null,
+   "acum": null,
+   "plan": 2580.65,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-06",
+   "dia": 21,
+   "gasto": null,
+   "acum": null,
+   "plan": 2709.68,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-07",
+   "dia": 22,
+   "gasto": null,
+   "acum": null,
+   "plan": 2838.71,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-08",
+   "dia": 23,
+   "gasto": null,
+   "acum": null,
+   "plan": 2967.74,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-09",
+   "dia": 24,
+   "gasto": null,
+   "acum": null,
+   "plan": 3096.77,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-10",
+   "dia": 25,
+   "gasto": null,
+   "acum": null,
+   "plan": 3225.81,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-11",
+   "dia": 26,
+   "gasto": null,
+   "acum": null,
+   "plan": 3354.84,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-12",
+   "dia": 27,
+   "gasto": null,
+   "acum": null,
+   "plan": 3483.87,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-13",
+   "dia": 28,
+   "gasto": null,
+   "acum": null,
+   "plan": 3612.9,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-14",
+   "dia": 29,
+   "gasto": null,
+   "acum": null,
+   "plan": 3741.94,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-15",
+   "dia": 30,
+   "gasto": null,
+   "acum": null,
+   "plan": 3870.97,
+   "futuro": true
+  },
+  {
+   "fecha": "2026-08-16",
+   "dia": 31,
+   "gasto": null,
+   "acum": null,
+   "plan": 4000.0,
+   "futuro": true
+  }
+ ],
+ "serie_previa": [
+  {
+   "dia": 1,
+   "acum": 285.0
+  },
+  {
+   "dia": 2,
+   "acum": 340.0
+  },
+  {
+   "dia": 3,
+   "acum": 2651.93
+  },
+  {
+   "dia": 4,
+   "acum": 2861.93
+  },
+  {
+   "dia": 5,
+   "acum": 3317.36
+  },
+  {
+   "dia": 6,
+   "acum": 3526.22
+  },
+  {
+   "dia": 7,
+   "acum": 3776.22
+  },
+  {
+   "dia": 8,
+   "acum": 4061.22
+  },
+  {
+   "dia": 9,
+   "acum": 4186.22
+  },
+  {
+   "dia": 10,
+   "acum": 4216.22
+  },
+  {
+   "dia": 11,
+   "acum": 4431.22
+  },
+  {
+   "dia": 12,
+   "acum": 4596.22
+  },
+  {
+   "dia": 13,
+   "acum": 4731.22
+  },
+  {
+   "dia": 14,
+   "acum": 4836.22
+  },
+  {
+   "dia": 15,
+   "acum": 4914.22
+  },
+  {
+   "dia": 16,
+   "acum": 5169.22
+  },
+  {
+   "dia": 17,
+   "acum": 5277.22
+  },
+  {
+   "dia": 18,
+   "acum": 5405.22
+  },
+  {
+   "dia": 19,
+   "acum": 5610.22
+  },
+  {
+   "dia": 20,
+   "acum": 5778.22
+  },
+  {
+   "dia": 21,
+   "acum": 5841.22
+  },
+  {
+   "dia": 22,
+   "acum": 6111.22
+  },
+  {
+   "dia": 23,
+   "acum": 6216.22
+  },
+  {
+   "dia": 24,
+   "acum": 6431.22
+  },
+  {
+   "dia": 25,
+   "acum": 6561.22
+  },
+  {
+   "dia": 26,
+   "acum": 6591.22
+  },
+  {
+   "dia": 27,
+   "acum": 6756.22
+  },
+  {
+   "dia": 28,
+   "acum": 6839.22
+  },
+  {
+   "dia": 29,
+   "acum": 6954.22
+  },
+  {
+   "dia": 30,
+   "acum": 7129.22
+  }
+ ],
+ "categorias": {
+  "Comida": 542.0,
+  "Suscripciones": 248.22000000000003,
+  "Salidas": 305.0,
+  "Salud": 160.0,
+  "Transporte": 385.0,
+  "Otros": 85.0,
+  "Sin etiquetar": 175.0
+ },
+ "patrimonio": {
+  "activos": 5050.0,
+  "neto": 4050.0,
+  "invertido": 2400.0,
+  "liquido": 2650.0,
+  "gastado_ciclo_bs": 4300.22,
+  "gastado_wallbit_bs": 4300.22,
+  "gastado_fuera_bs": 0.0,
+  "cuentas": [
+   {
+    "nombre": "Wallbit · líquido",
+    "usd": 2200.0,
+    "tipo": "liquido"
+   },
+   {
+    "nombre": "Wallbit · sin invertir",
+    "usd": 0,
+    "tipo": "liquido"
+   },
+   {
+    "nombre": "Wallbit · índice SPY",
+    "usd": 900.0,
+    "tipo": "invertido"
+   },
+   {
+    "nombre": "Banco local",
+    "usd": 450.0,
+    "tipo": "liquido"
+   },
+   {
+    "nombre": "Exchange (cripto)",
+    "usd": 1500.0,
+    "tipo": "invertido"
+   }
+  ]
+ },
+ "cuentas_manuales": [
+  {
+   "name": "Banco local",
+   "amount": 3150.0,
+   "currency": "BOB",
+   "kind": "liquido",
+   "usd": 450.0
+  },
+  {
+   "name": "Exchange (cripto)",
+   "amount": 1500.0,
+   "currency": "USD",
+   "kind": "invertido",
+   "usd": 1500.0
+  }
+ ],
+ "deuda": {
+  "total": 1500,
+  "restante": 1000.0,
+  "acreedores": [
+   {
+    "name": "Préstamo familiar",
+    "amount": 1000,
+    "left": 500.0,
+    "paid": false
+   },
+   {
+    "name": "Tarjeta",
+    "amount": 500,
+    "left": 500.0,
+    "paid": false
+   }
+  ],
+  "cerrada": false,
+  "fecha_cero": "2026-10-26"
+ },
+ "colchon": {
+  "actual": 800.0,
+  "meta": 6000,
+  "falta": 5200.0,
+  "pct": 0.1333,
+  "aporte_plan": 400,
+  "meses_al_ritmo": 13.0
+ },
+ "hitos": {
+  "debt_zero": "2026-10-26",
+  "colchon_done": "2027-03-25",
+  "dca_full": "2027-05-24"
+ },
+ "proximo_plan": {
+  "month": "2026-08",
+  "colchon": 400,
+  "deuda": 300,
+  "dca": 200
+ },
+ "excepcionales": {
+  "items": [
+   {
+    "id": "cumpleanos",
+    "nombre": "Cumpleaños",
+    "fecha": "2026-08-03",
+    "usd": 80,
+    "bs": 560.0,
+    "pagado_bs": 0,
+    "restante_bs": 560.0,
+    "pagos": [],
+    "saldado": false,
+    "dias_faltan": 6,
+    "pasado": false,
+    "nota": "Cena con amigos. Monto decidido de antemano."
+   },
+   {
+    "id": "viaje-de-fin-de-mes",
+    "nombre": "Viaje de fin de mes",
+    "fecha": "2026-08-12",
+    "usd": 250,
+    "bs": 1750.0,
+    "pagado_bs": 0,
+    "restante_bs": 1750.0,
+    "pagos": [],
+    "saldado": false,
+    "dias_faltan": 15,
+    "pasado": false,
+    "nota": "Pasaje + alojamiento, 4 días fuera."
+   }
+  ],
+  "reservado_bs": 2310.0,
+  "reservado_usd": 330.0,
+  "libre_tras_reserva_bs": 3640.0,
+  "diario_con_reserva": 182.0,
+  "alcanza": true,
+  "veredicto": null
+ },
+ "ingresos": [
+  {
+   "fecha": "2026-07-17",
+   "type": "EARN",
+   "fuente": "RENDIMIENTO CUENTA",
+   "monto": 3.4,
+   "cur": "USD",
+   "uuid": "demo-0109"
+  },
+  {
+   "fecha": "2026-07-17",
+   "type": "DEPOSIT",
+   "fuente": "NOMINA MENSUAL",
+   "monto": 2000.0,
+   "cur": "USD",
+   "uuid": "demo-0110"
+  }
+ ],
+ "n_movimientos": 31
+}

@@ -1,0 +1,1390 @@
+<!-- charset PRIMERO, antes de cualquier texto: si no, el navegador adivina la
+     codificación, cae a Latin-1 y parte cada acento en dos ("mayoría" → "mayorÃ­a").
+     Tiene que entrar en los primeros 1024 bytes del archivo o el navegador ya decidió. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi plata — centro de control financiero</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   MI PLATA · centro de control financiero personal
+   IBM Carbon Design System v11 — tema White (claro fijo).
+
+   Estructura = UI Shell completo de Carbon: header de 48px + rail lateral
+   de iconos de 48px + contenido a ANCHO COMPLETO de la pantalla. Sin caja
+   centrada: un centro de control usa todo el vidrio disponible.
+
+   Densidad: la primera pantalla trae la decisión (cuánto puedo gastar),
+   el estado (4 métricas), el porqué (dos límites) y el qué hacer. Los
+   detalles vienen abajo. Nadie debería tener que hacer scroll para saber
+   si puede gastar hoy.
+
+   Fidelidad: radio 0 salvo Tag · sin sombras · tokens White reales ·
+   escala tipográfica y tracking de Carbon · rejilla con separadores de
+   1px · paleta categórica oficial de data-viz · iconos en grilla 32.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root{
+  color-scheme:light;
+  --background:#ffffff; --background-inverse:#161616;
+  --layer-01:#f4f4f4; --layer-02:#ffffff; --layer-accent-01:#e0e0e0;
+  --border-subtle:#e0e0e0; --border-strong:#8d8d8d;
+  --text-primary:#161616; --text-secondary:#525252; --text-helper:#6f6f6f;
+  --text-on-color:#ffffff;
+  --interactive:#0f62fe;
+  --support-error:#da1e28; --support-success:#24a148;
+  --support-warning:#f1c21b; --support-info:#0043ce;
+  --err-bg:#fff1f1; --ok-bg:#defbe6; --warn-bg:#fcf4d6; --info-bg:#edf5ff;
+  --err-text:#a2191f; --ok-text:#0e6027; --warn-text:#8e6a00;
+  --d1:#6929c4; --d2:#1192e8; --d3:#005d5d; --d4:#9f1853;
+  --d5:#fa4d56; --d6:#198038; --d7:#002d9c; --d8:#b28600;
+  --rail:48px;
+  --font:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0; padding:0}
+body{
+  background:var(--border-subtle); color:var(--text-primary); font-family:var(--font);
+  font-size:14px; line-height:1.4286; letter-spacing:.16px;
+  -webkit-font-smoothing:antialiased; font-variant-numeric:tabular-nums;
+}
+.label{font-size:12px; line-height:1.3333; letter-spacing:.32px; color:var(--text-secondary)}
+.help{font-size:12px; line-height:1.3333; letter-spacing:.32px; color:var(--text-helper)}
+
+/* ── header ── */
+.hdr{
+  height:48px; background:var(--background-inverse); color:var(--text-on-color);
+  display:flex; align-items:center; gap:14px; padding:0 16px;
+  position:sticky; top:0; z-index:40;
+}
+.hdr .logo{width:20px; height:20px; color:#fff}
+.hdr .nm{font-size:14px; letter-spacing:.16px}
+.hdr .nm b{font-weight:600}
+.hdr .ctx{font-size:12px; letter-spacing:.32px; color:#c6c6c6;
+  border-left:1px solid #393939; padding-left:14px; display:flex; align-items:center; gap:7px}
+.hdr .right{margin-left:auto; display:flex; align-items:center; gap:12px}
+
+/* ── rail de iconos ── */
+.rail{
+  position:fixed; left:0; top:48px; bottom:0; width:var(--rail);
+  background:var(--layer-02); border-right:1px solid var(--border-subtle);
+  display:flex; flex-direction:column; z-index:35;
+}
+.rail a{
+  height:48px; display:grid; place-items:center; color:var(--text-secondary);
+  text-decoration:none; border-left:3px solid transparent; position:relative;
+}
+.rail a:hover{background:var(--layer-01); color:var(--text-primary)}
+.rail a.on{border-left-color:var(--interactive); color:var(--interactive); background:var(--layer-01)}
+.rail a:focus-visible{outline:2px solid var(--interactive); outline-offset:-2px}
+.rail a::after{
+  content:attr(data-t); position:absolute; left:calc(100% + 8px); white-space:nowrap;
+  background:var(--background-inverse); color:#fff; font-size:12px; letter-spacing:.32px;
+  padding:5px 9px; opacity:0; pointer-events:none; transition:opacity .08s;
+}
+.rail a:hover::after{opacity:1}
+
+/* ── lienzo a ancho completo ── */
+.canvas{margin-left:var(--rail); padding:0}
+.grid{display:grid; grid-template-columns:repeat(12,1fr); gap:1px;
+  background:var(--border-subtle); border-bottom:1px solid var(--border-subtle)}
+.t{background:var(--layer-02); padding:16px; min-width:0; grid-column:span 12}
+.t.p20{padding:20px}
+.th{display:flex; align-items:center; gap:8px; margin-bottom:3px}
+.th .ico{color:var(--text-secondary)}
+.th h2{margin:0; font-size:14px; line-height:1.2857; font-weight:600; letter-spacing:.16px}
+.th .r{margin-left:auto}
+.cap{margin:0 0 14px; font-size:12px; letter-spacing:.32px; color:var(--text-helper)}
+@media (min-width:672px){
+  .c2{grid-column:span 2} .c3{grid-column:span 3} .c4{grid-column:span 4} .c5{grid-column:span 5}
+  .c6{grid-column:span 6} .c7{grid-column:span 7} .c8{grid-column:span 8}
+  .c9{grid-column:span 9} .c12{grid-column:span 12}
+}
+@media (min-width:672px) and (max-width:1055px){
+  .c2{grid-column:span 4} .c3{grid-column:span 6} .c4{grid-column:span 6} .c5{grid-column:span 12}
+  .c7,.c8,.c9{grid-column:span 12} .c6{grid-column:span 6}
+}
+
+/* ── tipos ── */
+.big{font-size:clamp(30px,3.4vw,38px); line-height:1.1; font-weight:300;
+  letter-spacing:-.015em; margin:8px 0 0}
+.big small{font-size:.3em; font-weight:400; color:var(--text-secondary);
+  letter-spacing:.16px; margin-left:8px}
+.big.err{color:var(--err-text)} .big.ok{color:var(--ok-text)} .big.warn{color:var(--warn-text)}
+.met{font-size:22px; line-height:1.2; font-weight:400; margin:7px 0 2px}
+/* la fila de "cuánto tengo": cuatro cifras del mismo peso, la primera destacada */
+.plata{font-size:clamp(28px,3vw,34px); line-height:1.1; font-weight:300;
+  letter-spacing:-.015em; margin:8px 0 2px}
+.plata.jefe{font-weight:400}
+.plata small{font-size:.45em; color:var(--text-secondary); margin-left:5px}
+/* sello de procedencia del dato */
+.fuente{display:inline-flex; align-items:center; gap:7px; height:26px; padding:0 10px;
+  background:var(--info-bg); color:var(--support-info); border-radius:13px;
+  font-size:12px; letter-spacing:.16px}
+.fuente b{font-weight:600; letter-spacing:-.01em}
+.fuente .wb{width:15px; height:15px; flex:none}
+.met small{font-size:.48em; color:var(--text-secondary); margin-left:4px}
+.met.err{color:var(--err-text)} .met.ok{color:var(--ok-text)} .met.warn{color:var(--warn-text)}
+
+.tag{display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px;
+  border-radius:12px; font-size:12px; letter-spacing:.32px; white-space:nowrap}
+.tag.green{background:var(--ok-bg); color:var(--ok-text)}
+.tag.red{background:var(--err-bg); color:var(--err-text)}
+.tag.yellow{background:var(--warn-bg); color:var(--warn-text)}
+.tag.gray{background:var(--layer-accent-01); color:var(--text-secondary)}
+.tag.blue{background:var(--info-bg); color:var(--support-info)}
+
+svg.ico{width:20px; height:20px; flex:none; fill:none; stroke:currentColor;
+  stroke-width:2; stroke-linecap:butt; stroke-linejoin:miter}
+svg.ico.sm{width:16px; height:16px}
+svg.ico.xs{width:14px; height:14px; stroke-width:2.4}
+
+table{width:100%; border-collapse:collapse; font-size:14px; letter-spacing:.16px}
+th{text-align:left; font-size:12px; font-weight:600; letter-spacing:.32px;
+  color:var(--text-secondary); padding:6px 8px 6px 0; border-bottom:1px solid var(--border-strong)}
+th.r,td.r{text-align:right; padding-right:0}
+td{padding:9px 8px 9px 0; border-bottom:1px solid var(--border-subtle); vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono); font-size:13px; white-space:nowrap}
+td .sub{display:block; font-size:12px; letter-spacing:.32px; color:var(--text-helper)}
+tfoot td{border-top:1px solid var(--border-strong); border-bottom:0; padding-top:11px; font-weight:600}
+tfoot td.num{font-size:16px}
+tr.done td:first-child{color:var(--text-helper); text-decoration:line-through}
+td.ic{width:26px; padding-right:0; color:var(--text-helper)}
+.sw{display:inline-block; width:12px; height:12px; margin-right:9px; vertical-align:-1px}
+
+.pbar{height:8px; background:var(--layer-accent-01); display:flex; overflow:hidden}
+.pbar i{display:block; height:100%}
+.notif{display:flex; gap:11px; padding:12px 14px; border-left:3px solid var(--support-warning);
+  background:var(--warn-bg); margin-top:14px; font-size:13px; line-height:1.45; letter-spacing:.16px}
+.notif .ico{color:var(--warn-text); margin-top:1px}
+.notif b{font-weight:600}
+
+/* ── registro de movimientos ──
+   Una lista NO se estira al ancho de la pantalla: a 1.400px el comercio queda en un
+   extremo y el monto en el otro, y el ojo pierde la fila. Se resuelve como lo resuelve
+   cualquier extracto bancario: medida de lectura acotada (~340px) y, si sobra ancho,
+   se REPITE en columnas en vez de alargarse. */
+.reg{columns:340px auto; column-gap:24px}
+.dia{break-inside:avoid; margin-bottom:22px; display:inline-block; width:100%}
+.dh{display:flex; align-items:baseline; gap:10px; padding-bottom:6px;
+  border-bottom:1px solid var(--border-strong)}
+.dh .dd{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600;
+  letter-spacing:.32px; text-transform:uppercase; color:var(--text-secondary)}
+.dh .dt{margin-left:auto; font-family:var(--mono); font-size:13px; font-weight:600}
+.dh .dt.over{color:var(--err-text)}
+.mv{display:flex; align-items:center; gap:9px; padding:8px 0;
+  border-bottom:1px solid var(--border-subtle)}
+.mv:last-child{border-bottom:0}
+.mv .mi{color:var(--text-helper); flex:none}
+.mv .mb{flex:1; min-width:0}
+.mv .mn{font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mv .mm{font-size:11.5px; letter-spacing:.32px; color:var(--text-helper);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mv .ma{font-family:var(--mono); font-size:13px; font-weight:600; white-space:nowrap}
+
+svg.chart{display:block; width:100%; height:auto; overflow:visible}
+.ax{font-family:var(--mono); font-size:10px; fill:var(--text-helper)}
+.ax.b{fill:var(--text-secondary)}
+.leg{display:flex; flex-wrap:wrap; gap:14px; margin-top:12px; font-size:12px;
+  letter-spacing:.32px; color:var(--text-secondary)}
+.leg span{display:flex; align-items:center; gap:6px}
+.leg i{width:14px; height:2px; flex:none}
+.leg i.d{background:repeating-linear-gradient(90deg,var(--border-strong) 0 4px,transparent 4px 7px)}
+
+/* ── línea de hitos horizontal ── */
+.mline{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:1px;
+  background:var(--border-subtle); margin-top:4px}
+.ms{background:var(--layer-02); padding:14px 16px; display:flex; gap:11px; align-items:flex-start}
+.ms .dot{width:26px; height:26px; flex:none; display:grid; place-items:center;
+  background:var(--layer-01); color:var(--text-helper)}
+.ms .dot.on{background:var(--support-success); color:#fff}
+.ms .mt{font-size:14px; letter-spacing:.16px}
+.ms .md{font-size:12px; letter-spacing:.32px; color:var(--text-helper)}
+@media (max-width:671px){ .mline{grid-auto-flow:row} }
+
+footer{background:var(--layer-02); margin-left:var(--rail); padding:18px 16px 40px;
+  font-size:12px; letter-spacing:.32px; color:var(--text-helper); line-height:1.8}
+
+/* ── la respuesta: una sola cifra, antes que cualquier otra cosa ──
+   Nadie abre esto para contemplar su patrimonio: lo abre para saber si puede gastar.
+   Ese número ocupa la primera pantalla entero y no compite con nada. */
+.hero{background:var(--layer-02); border-bottom:1px solid var(--border-subtle);
+  padding:22px 16px 24px; display:flex; gap:clamp(20px,4vw,56px); align-items:flex-end; flex-wrap:wrap}
+.hero .col{min-width:min(280px,100%)}
+.hero .num{font-size:clamp(56px,9vw,104px); line-height:.92; font-weight:300;
+  letter-spacing:-.025em; margin:6px 0 0; display:flex; align-items:baseline; gap:10px}
+.hero .num u{text-decoration:none; font-size:.26em; font-weight:400; letter-spacing:.16px;
+  color:var(--text-secondary)}
+.hero .num.err{color:var(--err-text)} .hero .num.warn{color:var(--warn-text)} .hero .num.ok{color:var(--ok-text)}
+.hero .sub{margin:12px 0 0; display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.hero .datos{display:flex; gap:clamp(16px,3vw,40px); flex-wrap:wrap; margin-left:auto}
+.hero .dato{min-width:104px}
+.hero .dato .v{font-size:22px; font-weight:400; margin:5px 0 2px}
+.hero .dato .v.mini{font-size:18px}
+
+/* ── cola de trabajo: lo que el sistema no sabe qué fue ──
+   Tarjetas, no filas: cada una es una decisión que se toma con el pulgar. */
+.cola{display:grid; grid-template-columns:repeat(auto-fill,minmax(clamp(300px,26vw,380px),1fr));
+  gap:1px; background:var(--border-subtle); border-top:1px solid var(--border-subtle)}
+.qc{background:var(--layer-02); padding:14px 16px 16px; display:flex; flex-direction:column}
+.qc.va{opacity:.45; pointer-events:none}
+.qc .cab{display:flex; align-items:baseline; gap:10px}
+.qc .qn{font-size:15px; font-weight:600; letter-spacing:.16px; overflow:hidden;
+  text-overflow:ellipsis; white-space:nowrap}
+.qc .qm{margin-left:auto; font-family:var(--mono); font-size:16px; font-weight:600; white-space:nowrap}
+.qc .qmeta{font-size:12px; letter-spacing:.32px; color:var(--text-secondary); margin-top:3px;
+  display:flex; align-items:center; gap:6px; flex-wrap:wrap}
+.qc .qdet{font-size:11.5px; letter-spacing:.32px; color:var(--text-helper); margin-top:5px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.cats{display:flex; flex-wrap:wrap; gap:1px; margin-top:12px}
+button{font-family:inherit}
+button.cat{height:32px; padding:0 11px; border:1px solid var(--border-subtle);
+  background:var(--layer-01); color:var(--text-primary); font-size:12.5px; letter-spacing:.16px;
+  cursor:pointer; display:inline-flex; align-items:center; gap:5px}
+button.cat:hover{background:var(--layer-accent-01)}
+button.cat:focus-visible{outline:2px solid var(--interactive); outline-offset:-2px}
+button.cat.top{border-color:var(--border-strong)}
+button.cat.mas{background:transparent; color:var(--interactive); border-color:transparent}
+/* La nota va pegada a su botón de guardar: escribir sin guardar no hace nada, y eso
+   tiene que verse. Antes el texto sólo se enviaba si además tocabas una categoría, así
+   que quien describía y no clasificaba perdía lo escrito al redibujarse la tarjeta. */
+.notafila{display:flex; gap:0; margin-top:10px}
+input.nota{flex:1; min-width:0; height:34px; border:0; border-bottom:1px solid var(--border-strong);
+  background:var(--layer-01); padding:0 10px; font:inherit; font-size:13px}
+input.nota:focus{outline:2px solid var(--interactive); outline-offset:-2px}
+button.guardarnota{
+  height:34px; padding:0 13px; border:0; border-bottom:1px solid var(--border-strong);
+  background:var(--layer-accent-01); color:var(--text-primary);
+  font:inherit; font-size:12.5px; cursor:pointer; white-space:nowrap;
+}
+button.guardarnota:hover{background:var(--interactive); color:var(--text-on-color)}
+button.guardarnota:focus-visible{outline:2px solid var(--interactive); outline-offset:-2px}
+button.guardarnota[disabled]{opacity:.45; cursor:default; background:var(--layer-accent-01); color:var(--text-primary)}
+/* Ya descrito: lo que falta es sólo encasillarlo, y eso lo puede hacer el agente. */
+.qdesc{
+  margin-top:8px; padding:8px 10px; background:var(--info-bg);
+  border-left:3px solid var(--interactive); font-size:12.5px; line-height:1.45;
+}
+.qdesc b{font-weight:600}
+.qc.descrito{opacity:.82}
+/* Marcar un gasto como parte de algo ya decidido va ARRIBA de las categorías: si el
+   pasaje del viaje se clasifica como "Transporte" a secas, la reserva del viaje sigue
+   apartando plata para un boleto ya comprado. */
+.exclinea{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:10px}
+.exclinea .help{font-size:11.5px}
+button.cat.exc{border-color:var(--interactive); color:var(--interactive); background:var(--info-bg)}
+button.cat.exc:hover{background:var(--interactive); color:var(--text-on-color)}
+/* Seleccionado: queda armado y se aplica junto con la categoría que toques después. */
+button.cat.exc.on{background:var(--interactive); color:var(--text-on-color); font-weight:600}
+button.cat.exc.on::before{content:'✓ '}
+.vacio{display:flex; gap:14px; align-items:center; padding:18px 16px; background:var(--ok-bg);
+  border-left:3px solid var(--support-success)}
+.vacio .ico{color:var(--ok-text)}
+.vacio b{font-weight:600}
+
+/* ── edición de saldos ── */
+input.saldo{width:118px; height:32px; text-align:right; font-family:var(--mono); font-size:13px;
+  border:0; border-bottom:1px solid var(--border-strong); background:var(--layer-01); padding:0 8px}
+input.saldo:focus{outline:2px solid var(--interactive); outline-offset:-2px}
+button.btn{height:36px; padding:0 15px; border:0; background:var(--interactive); color:#fff;
+  font-size:14px; letter-spacing:.16px; cursor:pointer; display:inline-flex; align-items:center; gap:8px}
+button.btn.sec{background:transparent; color:var(--text-primary); border:1px solid var(--border-strong)}
+button.btn:hover{filter:brightness(1.08)}
+button:disabled{opacity:.45; cursor:not-allowed}
+
+/* ── aviso de lo que acaba de pasar ── */
+.toast{position:fixed; left:16px; bottom:16px; z-index:60; display:flex; gap:12px;
+  align-items:center; background:var(--background-inverse); color:#fff; padding:13px 15px;
+  max-width:min(460px,92vw); font-size:13px; line-height:1.4; letter-spacing:.16px;
+  border-left:3px solid var(--support-success)}
+.toast.err{border-left-color:var(--support-error)}
+.toast.info{border-left-color:var(--support-info)}
+.toast button{background:none; border:0; color:#78a9ff; font:inherit; font-size:13px;
+  cursor:pointer; text-decoration:underline; padding:0; white-space:nowrap}
+.toast .x{margin-left:auto; color:#c6c6c6; text-decoration:none; font-size:18px; line-height:1}
+
+@media (max-width:671px){
+  :root{--rail:0px}
+  .hero .datos{margin-left:0}
+  .rail{position:static; width:100%; height:auto; flex-direction:row;
+    top:auto; border-right:0; border-bottom:1px solid var(--border-subtle);
+    overflow-x:auto; position:sticky; top:48px}
+  .rail a{flex:1; min-width:52px; border-left:0; border-bottom:3px solid transparent}
+  .rail a.on{border-left:0; border-bottom-color:var(--interactive)}
+  .rail a::after{display:none}
+  .canvas,footer{margin-left:0}
+  .hdr .ctx{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── onboarding ─────────────────────────────────────────────────────────────
+   La caja se queda ABAJO y angosta a propósito: el protagonista es la sección
+   real que está resaltada arriba, no el cartel que la explica. */
+.ayuda{
+  display:flex; align-items:center; justify-content:center;
+  width:32px; height:32px; margin-left:4px; padding:0;
+  background:none; border:0; border-radius:50%; cursor:pointer;
+  color:var(--text-secondary);
+}
+.ayuda:hover{background:var(--layer-01); color:var(--interactive)}
+.ayuda:focus-visible{outline:2px solid var(--interactive); outline-offset:2px}
+.ayuda[disabled]{cursor:default; color:var(--interactive)}
+@keyframes girar{to{transform:rotate(360deg)}}
+.ayuda.girando .ico{animation:girar .9s linear infinite}
+
+/* `display:contents` a propósito: el contenedor NO puede tener caja propia.
+   Cualquier elemento posicionado crea un contexto de apilado, y entonces la tarjeta
+   queda atrapada dentro de él — la sección resaltada (que vive fuera, en el documento)
+   se le montaba encima y tapaba el texto que estaba explicando.
+   Sin caja, los tres se ordenan contra la raíz: velo 900 → sección 901 → tarjeta 902. */
+.tour{display:contents}
+.tour[hidden]{display:none}
+.tour-fondo{position:fixed; inset:0; z-index:900; background:rgba(22,22,22,.45)}
+.tour-caja{
+  position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:902;
+  width:min(560px, calc(100vw - 32px));
+  background:var(--layer-02); border:1px solid var(--border-subtle);
+  box-shadow:0 12px 32px rgba(0,0,0,.22);
+  padding:20px 24px 16px; display:flex; flex-direction:column; gap:12px;
+}
+.tour-cab{display:flex; align-items:center; justify-content:space-between}
+.tour-paso{
+  font:600 11px/1 var(--font); letter-spacing:.06em; text-transform:uppercase;
+  color:var(--interactive);
+}
+.tour-x{
+  background:none; border:0; cursor:pointer; font-size:16px; line-height:1;
+  color:var(--text-secondary); padding:4px 6px;
+}
+.tour-x:hover{color:var(--text-primary)}
+.tour-caja h2{margin:0; font:600 20px/1.25 var(--font); color:var(--text-primary)}
+.tour-cuerpo{font:400 14px/1.55 var(--font); color:var(--text-secondary)}
+.tour-cuerpo b{color:var(--text-primary); font-weight:600}
+.tour-cuerpo .dato{
+  display:block; margin-top:10px; padding:10px 12px;
+  background:var(--layer-01); border-left:3px solid var(--interactive);
+  font:400 13px/1.5 var(--font); color:var(--text-primary);
+}
+.tour-cuerpo a{color:var(--interactive)}
+.tour-pies{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  margin-top:4px; padding-top:12px; border-top:1px solid var(--border-subtle);
+}
+.tour-puntos{display:flex; gap:6px}
+.tour-puntos i{
+  width:6px; height:6px; border-radius:50%; background:var(--border-strong);
+  opacity:.35; transition:opacity .15s, background .15s;
+}
+.tour-puntos i.on{opacity:1; background:var(--interactive)}
+.tour-btns{display:flex; gap:8px}
+.btn-pri,.btn-sec{
+  font:400 14px/1 var(--font); padding:11px 16px; border:1px solid transparent;
+  cursor:pointer; min-height:40px;
+}
+.btn-pri{background:var(--interactive); color:var(--text-on-color)}
+.btn-pri:hover{background:#0353e9}
+.btn-sec{background:none; color:var(--interactive); border-color:var(--interactive)}
+.btn-sec:hover{background:var(--info-bg)}
+.btn-sec[disabled]{opacity:.4; cursor:default; background:none}
+.btn-pri:focus-visible,.btn-sec:focus-visible{outline:2px solid var(--text-primary); outline-offset:2px}
+
+/* La sección que se está explicando: se levanta por encima del velo. */
+.tour-foco{
+  position:relative; z-index:901; background:var(--background);
+  box-shadow:0 0 0 3px var(--interactive), 0 0 0 12px rgba(15,98,254,.15);
+  scroll-margin-top:120px;
+}
+/* Sitio para que la tarjeta no se pare encima del final de una sección larga: mientras
+   el recorrido está abierto, la página puede seguir bajando. */
+body.tour-abierto .canvas{padding-bottom:320px}
+@media (max-width:720px){
+  .tour-caja{bottom:0; width:100vw; padding:16px}
+  .tour-caja h2{font-size:18px}
+}
+</style>
+
+<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+  <g id="i-wallet"><path d="M4 9V7a1 1 0 0 1 1-1h19"/><path d="M4 9h22a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="M20 15h5v4h-5z"/></g>
+  <g id="i-gauge"><path d="M4 24a13 13 0 1 1 24 0"/><path d="M16 24l7-8"/><path d="M16 24h.01"/></g>
+  <g id="i-money"><rect x="3" y="7" width="26" height="18"/><circle cx="16" cy="16" r="4.5"/><path d="M7 11h.01M25 21h.01"/></g>
+  <g id="i-cal"><rect x="4" y="6" width="24" height="22"/><path d="M4 12h24M11 3v6M21 3v6"/></g>
+  <g id="i-growth"><path d="M4 25l8-8 5 5L28 9"/><path d="M20 9h8v8"/></g>
+  <g id="i-decline"><path d="M4 9l8 8 5-5 11 11"/><path d="M28 15v8h-8"/></g>
+  <g id="i-column"><path d="M4 28h24"/><path d="M7 28V16h5v12M18 28V6h5v22"/></g>
+  <g id="i-pie"><path d="M16 4v12h12"/><circle cx="16" cy="16" r="12"/></g>
+  <g id="i-bank"><path d="M2 12 16 4l14 8v3H2z"/><path d="M6 15v10M12 15v10M20 15v10M26 15v10M2 28h28"/></g>
+  <g id="i-piggy"><path d="M28 15h2v6h-3"/><path d="M13 6a10 10 0 0 1 14 9v8a2 2 0 0 1-2 2h-3v-3h-8v3H9a2 2 0 0 1-2-2v-4a10 10 0 0 1-3-7"/><path d="M9 15h.01"/></g>
+  <g id="i-flag"><path d="M6 29V4h18l-3 6 3 6H6"/></g>
+  <g id="i-warning"><path d="M16 3 2 28h28L16 3Z"/><path d="M16 12v9M16 24.5v.5"/></g>
+  <g id="i-check"><path d="M6 17l6.5 6.5L26 10"/></g>
+  <g id="i-arrow"><path d="M4 16h22M18 8l8 8-8 8"/></g>
+  <g id="i-time"><circle cx="16" cy="16" r="13"/><path d="M16 8v8l6 3.5"/></g>
+  <g id="i-grid"><path d="M4 4h10v10H4zM18 4h10v10H18zM4 18h10v10H4zM18 18h10v10H18z"/></g>
+  <g id="i-list"><path d="M11 7h18M11 16h18M11 25h18M4 7h2M4 16h2M4 25h2"/></g>
+  <g id="i-target"><circle cx="16" cy="16" r="12"/><circle cx="16" cy="16" r="6"/><circle cx="16" cy="16" r="1"/></g>
+  <g id="i-cart"><path d="M4 5h4l3.5 15h13L28 9H9"/><circle cx="13" cy="26" r="2"/><circle cx="24" cy="26" r="2"/></g>
+  <g id="i-up"><path d="M16 26V7M8 15l8-8 8 8"/></g>
+  <g id="i-down2"><path d="M16 6v19M8 17l8 8 8-8"/></g>
+  <g id="i-refresh"><path d="M28 6v8h-8"/><path d="M27 14a12 12 0 1 0-1.6 9"/></g>
+  <g id="i-wallbit" stroke="none" fill="currentColor">
+    <path d="M3 7h4.4l3.1 12.5L13.6 7h4.8l3.1 12.5L24.6 7H29l-5 18h-5l-2.6-10.6L13.8 25h-5L3 7Z"/></g>
+  <g id="i-receipt"><path d="M6 3v26l4-2 3 2 3-2 3 2 3-2 4 2V3z"/><path d="M11 10h10M11 16h10M11 22h6"/></g>
+  <g id="i-scale"><path d="M16 5v22M8 27h16"/><path d="M4 13h10l-5 8-5-8ZM18 13h10l-5 8-5-8ZM9 13 16 8l7 5"/></g>
+  <g id="i-tag"><path d="M28 15 17 4H4v13l11 11a1.4 1.4 0 0 0 2 0l11-11a1.4 1.4 0 0 0 0-2Z"/><circle cx="10" cy="10" r="1.6"/></g>
+  <g id="i-edit"><path d="M4 28h24"/><path d="M22 4l6 6L12 26H6v-6L22 4Z"/></g>
+  <g id="i-inbox"><path d="M4 18h7l2 4h6l2-4h7"/><path d="M6 5h20l3 13v9H3v-9L6 5Z"/></g>
+  <g id="i-help"><circle cx="16" cy="16" r="13"/><path d="M12.5 12.5a3.5 3.5 0 1 1 3.5 3.5v2.5"/><path d="M16 24h.01"/></g>
+  <g id="i-key"><circle cx="9" cy="16" r="5"/><path d="M14 16h14v4M22 16v4"/></g>
+</defs></svg>
+
+<div class="hdr">
+  <svg class="ico logo" viewBox="0 0 32 32"><use href="#i-wallet"/></svg>
+  <span class="nm"><b>Mi plata</b></span>
+  <span class="ctx" id="ctx"></span>
+  <span class="right" id="modo"></span>
+  <button class="ayuda" id="btn-sync" title="Traer los movimientos nuevos de Wallbit"
+          aria-label="Traer los movimientos nuevos de Wallbit">
+    <svg class="ico sm" viewBox="0 0 32 32"><use href="#i-refresh"/></svg>
+  </button>
+  <button class="ayuda" id="btn-tour" title="Cómo se lee este tablero" aria-label="Cómo se lee este tablero">
+    <svg class="ico sm" viewBox="0 0 32 32"><use href="#i-help"/></svg>
+  </button>
+</div>
+
+<nav class="rail" id="rail"></nav>
+<main class="canvas" id="app"></main>
+<footer id="pie"></footer>
+
+<!-- ═══ Onboarding: se explica solo, señalando la parte real de la pantalla ═══
+     No es un carrusel de dibujos: cada paso hace scroll a la sección de verdad y la
+     resalta, así lo que se aprende es ESTE tablero y no una ilustración de otro. -->
+<div class="tour" id="tour" hidden>
+  <div class="tour-fondo" data-cerrar></div>
+  <div class="tour-caja" role="dialog" aria-modal="true" aria-labelledby="tour-tit">
+    <div class="tour-cab">
+      <span class="tour-paso" id="tour-paso"></span>
+      <button class="tour-x" data-cerrar aria-label="Cerrar">✕</button>
+    </div>
+    <h2 id="tour-tit"></h2>
+    <div class="tour-cuerpo" id="tour-cuerpo"></div>
+    <div class="tour-pies">
+      <div class="tour-puntos" id="tour-puntos"></div>
+      <div class="tour-btns">
+        <button class="btn-sec" id="tour-antes">Atrás</button>
+        <button class="btn-pri" id="tour-sig">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* Datos incrustados (para abrir el archivo con doble clic, sin servidor). Servida por
+   HTTP la app los busca sola: state.json y, si no está, demo.json. El marcador se deja
+   como comentario a propósito — así el archivo SIN construir también es JavaScript
+   válido y la página no queda en blanco. */
+const DATOS = /*__STATE__*/null;
+
+const nf=new Intl.NumberFormat('es-BO');
+/* Un dato que falta se dibuja como "—", nunca como NaN. Si el archivo de estado viene
+   de una versión vieja o le falta un campo, la app degrada en vez de mostrar basura:
+   "NaN" no le dice nada a nadie y parece que el dinero se rompió. */
+const n_=v=>(typeof v==='number'&&isFinite(v))?v:null;
+const bs=v=>n_(v)===null?'—':nf.format(Math.round(v));
+const usd=v=>n_(v)===null?'—':'$'+nf.format(Math.round(v));
+const pc=v=>n_(v)===null?'—':Math.round(v*100)+'%';
+const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const fecha=s=>{const[y,m,d]=s.split('-').map(Number);return `${d} ${MES[m-1]}`};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ico=(n,c='')=>`<svg class="ico ${c}" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const angosto=()=>window.innerWidth<672;
+
+/* categorías → icono, para que la tabla se lea sin leerla */
+const ICO_CAT=[[/comida|super|mercado/i,'cart'],[/transporte|taxi|micro/i,'arrow'],
+  [/salida|fiesta|salidas/i,'time'],[/salud|gym|farmac/i,'piggy'],
+  [/suscrip|subs/i,'refresh'],[/personal/i,'wallet'],[/ofic|cowork/i,'grid']];
+const icoCat=n=>(ICO_CAT.find(([r])=>r.test(n))||[,'money'])[1];
+
+function donut(consumido, ritmo, color, size){
+  const S=size, R=S/2-11, C=2*Math.PI*R, cx=S/2, cy=S/2;
+  const rad=(ritmo*360-90)*Math.PI/180;
+  return `<svg class="chart" style="width:${S}px;max-width:100%" viewBox="0 0 ${S} ${S}"
+      role="img" aria-label="Llevas gastado el ${pc(consumido)} del presupuesto del mes">
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--layer-accent-01)" stroke-width="11"/>
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${color}" stroke-width="11"
+      stroke-dasharray="${(Math.min(consumido,1.4)*C).toFixed(1)} ${(C*2).toFixed(1)}"
+      transform="rotate(-90 ${cx} ${cy})"/>
+    <line x1="${cx+Math.cos(rad)*(R-9)}" y1="${cy+Math.sin(rad)*(R-9)}"
+          x2="${cx+Math.cos(rad)*(R+9)}" y2="${cy+Math.sin(rad)*(R+9)}"
+          stroke="var(--text-primary)" stroke-width="2"/>
+    <text x="${cx}" y="${cy+1}" text-anchor="middle" font-size="22" fill="var(--text-primary)">${pc(consumido)}</text>
+    <text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="11" fill="var(--text-helper)">gastado</text>
+  </svg>`;
+}
+
+function marcasY(max){
+  const p=Math.pow(10,Math.floor(Math.log10(max/3)));
+  const s=[1,2,2.5,5,10].map(m=>m*p).find(v=>max/v<=4)||p*10;
+  const t=[]; for(let v=0;v<=max*1.0001;v+=s)t.push(v); return t;
+}
+
+function graficoConsumo(S){
+  const W=angosto()?368:640, H=angosto()?200:230;
+  const M={t:18,r:14,b:26,l:angosto()?44:52}, iw=W-M.l-M.r, ih=H-M.t-M.b;
+  const largo=S.ciclo.largo, dia=S.ciclo.dia, total=S.presupuesto.diario_total;
+  const real=S.serie.filter(d=>d.acum!==null), ult=real[real.length-1];
+  const proj=ult.acum/dia*largo;
+  const max=Math.max(total,ult.acum,proj,...S.serie_previa.map(p=>p.acum))*1.07;
+  const X=d=>M.l+(d-1)/(largo-1)*iw, Y=v=>M.t+ih-v/max*ih;
+  const P=a=>a.map(p=>`${X(p.d).toFixed(1)},${Y(p.v).toFixed(1)}`).join(' ');
+  const plan=S.serie.map(d=>({d:d.dia,v:d.plan}));
+  const col=ult.acum>plan[dia-1].v*1.1?'var(--support-error)'
+          :(ult.acum>plan[dia-1].v?'var(--support-warning)':'var(--support-success)');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img"
+      aria-label="Lo que llevas gastado acumulado, comparado con lo planeado">
+    ${marcasY(max).map(v=>`<line x1="${M.l}" y1="${Y(v)}" x2="${W-M.r}" y2="${Y(v)}"
+      stroke="var(--border-subtle)"/><text class="ax" x="${M.l-8}" y="${Y(v)+3.5}"
+      text-anchor="end">${bs(v)}</text>`).join('')}
+    <line x1="${M.l}" y1="${M.t}" x2="${M.l}" y2="${M.t+ih}" stroke="var(--border-strong)"/>
+    <line x1="${M.l}" y1="${M.t+ih}" x2="${W-M.r}" y2="${M.t+ih}" stroke="var(--border-strong)"/>
+    <polyline points="${P(S.serie_previa.filter(p=>p.dia<=largo).map(p=>({d:p.dia,v:p.acum})))}"
+      fill="none" stroke="var(--text-helper)" stroke-width="1" stroke-dasharray="2 3" opacity=".6"/>
+    <polyline points="${P(plan)}" fill="none" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <polygon points="${X(1)},${Y(0)} ${P(real.map(d=>({d:d.dia,v:d.acum})))} ${X(dia)},${Y(0)}"
+      fill="${col}" opacity=".12"/>
+    <polyline points="${P(real.map(d=>({d:d.dia,v:d.acum})))}" fill="none" stroke="${col}" stroke-width="2"/>
+    <polyline points="${X(dia)},${Y(ult.acum)} ${X(largo)},${Y(proj)}" fill="none"
+      stroke="${col}" stroke-width="1.5" stroke-dasharray="3 3" opacity=".7"/>
+    <rect x="${X(dia)-3}" y="${Y(ult.acum)-3}" width="6" height="6" fill="${col}"/>
+    ${proj>total?`<text class="ax b" x="${W-M.r}" y="${Math.max(Y(proj)-8,M.t+9)}"
+      text-anchor="end" fill="${col}">a este ritmo acabas en ${bs(proj)}</text>`:''}
+    ${X(dia)-M.l>34?`<text class="ax" x="${M.l}" y="${H-7}">${fecha(S.ciclo.inicio)}</text>`:''}
+    ${W-M.r-X(dia)>34?`<text class="ax" x="${W-M.r}" y="${H-7}" text-anchor="end">${fecha(S.ciclo.fin)}</text>`:''}
+    <text class="ax b" x="${Math.min(Math.max(X(dia),M.l+12),W-M.r-12)}" y="${H-7}"
+      text-anchor="middle">hoy</text>
+  </svg>
+  <div class="leg"><span><i style="background:${col}"></i>lo que llevas</span>
+    <span><i class="d"></i>lo planeado</span>
+    <span><i style="background:var(--text-helper);opacity:.6"></i>mes pasado</span></div>`;
+}
+
+function graficoDiario(S){
+  const W=angosto()?368:430, H=angosto()?140:150;   // vive en media columna: más chico
+  const M={t:14,r:10,b:20,l:angosto()?42:46}, iw=W-M.l-M.r, ih=H-M.t-M.b;
+  const largo=S.ciclo.largo, permitido=S.presupuesto.diario_total/largo;
+  const max=Math.max(permitido*1.7,...S.serie.map(d=>d.gasto||0))*1.09;
+  const bw=iw/largo, Y=v=>M.t+ih-v/max*ih;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Cuánto gastaste cada día del mes">
+    ${marcasY(max).map(v=>`<line x1="${M.l}" y1="${Y(v)}" x2="${W-M.r}" y2="${Y(v)}"
+      stroke="var(--border-subtle)"/><text class="ax" x="${M.l-8}" y="${Y(v)+3.5}"
+      text-anchor="end">${bs(v)}</text>`).join('')}
+    <line x1="${M.l}" y1="${M.t+ih}" x2="${W-M.r}" y2="${M.t+ih}" stroke="var(--border-strong)"/>
+    ${S.serie.map((d,i)=>{ if(d.gasto===null)return'';
+      const h=Math.max(d.gasto/max*ih,d.gasto>0?2:0);
+      return `<rect x="${(M.l+i*bw+bw*.17).toFixed(1)}" y="${(M.t+ih-h).toFixed(1)}"
+        width="${(bw*.66).toFixed(1)}" height="${h.toFixed(1)}"
+        fill="${d.gasto>permitido?'var(--support-error)':'var(--d2)'}"/>`;}).join('')}
+    <line x1="${M.l}" y1="${Y(permitido)}" x2="${W-M.r}" y2="${Y(permitido)}"
+      stroke="var(--text-primary)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text class="ax b" x="${W-M.r}" y="${Y(permitido)-6}" text-anchor="end">tu tope diario: ${bs(permitido)} Bs</text>
+  </svg>`;
+}
+
+const NAV=[['hoy','gauge','Cuánto puedo gastar'],['agenda','cal','Ya decidido'],
+           ['pendientes','inbox','Por identificar'],
+           ['gasto','column','Gasto'],['movimientos','receipt','Movimientos'],
+           ['cuentas','bank','Cuentas'],['metas','flag','Colchón y metas']];
+
+/* ── registro de movimientos, en tarjetas por día ── */
+function registro(S){
+  const permitido=S.presupuesto.diario_total/S.ciclo.largo;
+  const dias=new Map();
+  for(const m of (S.movimientos||[])){
+    if(!dias.has(m.fecha)) dias.set(m.fecha,[]);
+    dias.get(m.fecha).push(m);
+  }
+  if(!dias.size) return '<p class="help">Todavía no hay movimientos este mes.</p>';
+  return `<div class="reg">`+[...dias.entries()].map(([f,ms])=>{
+    const tot=ms.reduce((s,m)=>s+m.bs,0);
+    return `<div class="dia">
+      <div class="dh">
+        <span class="dd">${ico('cal','xs')}${fecha(f)}</span>
+        <span class="dt ${tot>permitido?'over':''}">${bs(tot)} Bs</span>
+      </div>
+      ${ms.map(m=>`<div class="mv">
+        <span class="mi">${ico(icoCat(m.cat),'xs')}</span>
+        <span class="mb">
+          <span class="mn">${esc(m.nombre)}</span>
+          <span class="mm">${m.hora?esc(m.hora)+' · ':''}${esc(m.metodo||'Pago')}${m.banco?' · '+esc(m.banco):''}
+            · ${esc(m.cat)}${m.auto?' (automático)':''}</span>
+        </span>
+        <span class="ma">${bs(m.bs)}</span>
+      </div>`).join('')}
+    </div>`;
+  }).join('')+`</div>`;
+}
+
+/* ── LA COLA DE TRABAJO ──
+   El movimiento que nadie identificó es el que rompe el tablero: mientras esté ahí,
+   el gasto del mes está mal y el número de arriba miente. Así que va PRIMERO y se
+   resuelve acá mismo, con un toque. Antes esto obligaba a abrir un chat y contárselo
+   a un agente; por eso se acumulaban 12.238 Bs "sin identificar" que eran un pago a
+   su mamá. Etiquetar tiene que costar menos que ignorar. */
+const CATS_VISIBLES=8;
+
+function tarjetaPendiente(p,S){
+  const tax=S.taxonomia||[];
+  const top=tax.slice(0,CATS_VISIBLES), resto=tax.slice(CATS_VISIBLES);
+  const btn=(c,extra='')=>`<button class="cat ${extra}" data-uuid="${esc(p.uuid)}"
+      data-cat="${esc(c.nombre)}" title="${esc(c.desc||'')}">${esc(c.nombre)}${
+      c.no_consumo?' <span class="help" style="font-size:10.5px">no es gasto</span>':''}</button>`;
+  const yaDesc=p.descripcion||'';
+  // Sólo los que todavía esperan plata: ofrecer un excepcional ya saldado sería ruido.
+  const exc=((S.excepcionales||{}).items||[]).filter(x=>!x.pasado && !x.saldado);
+  return `<div class="qc ${yaDesc?'descrito':''}" data-card="${esc(p.uuid)}">
+    <div class="cab">
+      <span class="qn">${esc(p.nombre)}</span>
+      <span class="qm">${bs(p.bs)} Bs</span>
+    </div>
+    <div class="qmeta">
+      ${ico('cal','xs')}${fecha(p.fecha)}${p.hora?' · '+esc(p.hora):''}
+      · ${esc(p.metodo)}${p.banco?' · '+esc(p.banco):''}
+      ${p.usd?`· ${usd(p.usd)}`:''}
+    </div>
+    ${p.detalle?`<div class="qdet" title="${esc(p.detalle)}">${esc(p.detalle)}</div>`:''}
+    ${yaDesc?`<div class="qdesc"><b>Dijiste:</b> ${esc(yaDesc)}
+        <br><span class="help">Anotado. Toca una categoría para cerrarlo, o pídele a tu
+        agente «clasifica lo que anoté».</span></div>`:''}
+    <div class="notafila">
+      <input class="nota" data-nota="${esc(p.uuid)}" maxlength="200"
+        value="${esc(yaDesc)}"
+        placeholder="¿qué fue? escríbelo con tus palabras">
+      <button class="guardarnota" data-guardarnota="${esc(p.uuid)}">Guardar</button>
+    </div>
+    ${exc.length?`<div class="exclinea">
+      <span class="help">¿es parte de algo ya decidido?</span>
+      ${exc.map(x=>`<button class="cat exc" data-uuid="${esc(p.uuid)}" data-exc="${esc(x.id)}"
+         title="Baja lo que falta apartar para ${esc(x.nombre)}">${esc(x.nombre)}</button>`).join('')}
+    </div>`:''}
+    <div class="cats">
+      ${top.map(c=>btn(c,'top')).join('')}
+      ${resto.length?`<button class="cat mas" data-mas="${esc(p.uuid)}">+${resto.length} más</button>`:''}
+      ${resto.length?`<span data-resto="${esc(p.uuid)}" style="display:none;flex-wrap:wrap;gap:1px">
+        ${resto.map(c=>btn(c)).join('')}</span>`:''}
+    </div>
+  </div>`;
+}
+
+function cola(S){
+  const p=S.pendientes||[];
+  if(!p.length) return `<div class="vacio">${ico('check')}<span>
+    <b>Nada pendiente.</b> Cada movimiento del ciclo tiene nombre y categoría, así que el
+    gasto de arriba es el real — no una parte.${
+    (S.auto_clasificados&&S.auto_clasificados.n)?` ${S.auto_clasificados.n} pagos chicos
+    (menos de ${bs(S.auto_clasificados.max_bs)} Bs) se clasificaron solos como
+    ${esc(S.auto_clasificados.cat)}.`:''}</span></div>`;
+  return `<div class="cola">${p.map(x=>tarjetaPendiente(x,S)).join('')}</div>`;
+}
+
+function render(S){
+  const cy=S.ciclo, pr=S.presupuesto, cj=S.caja, pend=S.pendientes||[];
+  const gastado=pr.diario_gastado, total=pr.diario_total;
+  const esperado=total*cy.dia/cy.largo;
+  const est=gastado>esperado*1.1?'err':(gastado>esperado?'warn':'ok');
+  const tag={err:'red',warn:'yellow',ok:'green'}[est];
+  const rot={err:'Vas muy rápido',warn:'Vas justo',ok:'Vas bien'}[est];
+  const iEst={err:'warning',warn:'time',ok:'check'}[est];
+  const dvz={err:'var(--support-error)',warn:'var(--support-warning)',ok:'var(--support-success)'}[est];
+  const compromiso=Math.max(total-gastado,0)/cj.dias_restantes;
+  const sacrifica=cj.diario_a_cero>compromiso;
+
+  // TERCER BALDE: lo ya decidido con fecha (cumpleaños, viaje). Mientras no pase,
+  // esa plata NO es gastable — mostrar el número sin reservarla es prometer plata
+  // que ya tiene dueño. El grande es el número CON la reserva puesta.
+  const exc=S.excepcionales||{}, excItems=(exc.items||[]).filter(i=>!i.pasado);
+  const hayExc=excItems.length>0;
+  const diarioReal=hayExc?exc.diario_con_reserva:cj.diario_a_cero;
+  const PISO=170;                                   // su goteo medido: bajo esto no vive
+  const estH=!hayExc?est:(diarioReal<0?'err':diarioReal<PISO?'warn':'ok');
+
+  document.getElementById('ctx').innerHTML=
+    `${ico('cal','xs')}${fecha(cy.inicio)} – ${fecha(cy.fin)} · día ${cy.dia} de ${cy.largo}`;
+  document.getElementById('modo').innerHTML = S.demo
+    ? `<span class="tag yellow">${ico('warning','sm')}Ejemplo</span>`
+    : `<span class="tag green">${ico('check','sm')}Al día</span>`;
+  document.getElementById('rail').innerHTML=NAV.map(([id,i,t],k)=>
+    `<a href="#${id}" data-t="${t}" class="${k?'':'on'}" aria-label="${t}">${ico(i)}</a>`).join('');
+
+  const ctas=S.patrimonio.cuentas.filter(c=>c.usd>.5).sort((a,b)=>b.usd-a.usd);
+  const totC=ctas.reduce((s,c)=>s+c.usd,0)||1;
+  const D=['--d1','--d2','--d3','--d4','--d5','--d6','--d7','--d8'];
+  const cats=Object.entries(S.categorias).sort((a,b)=>b[1]-a[1]);
+  const totCat=cats.reduce((s,[,v])=>s+v,0)||1;
+  const pagado=S.deuda.total-S.deuda.restante;
+  const np=S.proximo_plan||{}, acc=[];
+  if(S.deuda.restante) acc.push(['arrow','Terminar de pagar la deuda','cuanto antes',usd(S.deuda.restante)]);
+  if(np.colchon) acc.push(['piggy','Guardar para el colchón',fecha(cy.fin),usd(np.colchon)]);
+  if(np.dca) acc.push(['growth','Invertir',fecha(cy.fin),usd(np.dca)]);
+  const hitos=[[S.hitos.debt_zero,'Sin deudas','pagas al último acreedor','decline'],
+               [S.hitos.colchon_done,`Colchón de ${usd(S.colchon.meta)}`,'3 meses de gastos guardados','piggy'],
+               [S.hitos.dca_full,'Invirtiendo a full','todo el excedente al índice','growth']];
+
+  document.getElementById('app').innerHTML=`
+  <!-- ═══ 1. LA RESPUESTA — lo primero, lo más grande, sin scroll ═══ -->
+  <section class="hero" id="hoy">
+    <div class="col">
+      <div class="th">${ico('gauge','sm')}<p class="label" style="margin:0">Puedes gastar hoy</p></div>
+      <p class="num ${estH}">${bs(diarioReal)}<u>Bs</u></p>
+      <div class="sub">
+        <span class="tag ${tag}">${ico(iEst,'sm')}${rot}</span>
+        <span class="help">te quedan ${bs(hayExc?exc.libre_tras_reserva_bs:cj.libre_bs)} Bs
+          para ${cj.dias_restantes} días, hasta el sueldo del ${fecha(cy.fin)}</span>
+      </div>
+      ${hayExc?`<div class="sub"><a href="#agenda" class="tag ${diarioReal<PISO?'red':'yellow'}"
+        style="text-decoration:none">${ico('cal','sm')}ya reservados ${bs(exc.reservado_bs)} Bs
+        — ${excItems.map(i=>i.nombre.split('(')[0].trim().toLowerCase()).join(' y ')}</a>
+        <span class="help">sin apartarlos serían ${bs(cj.diario_a_cero)} Bs/día</span></div>`:''}
+      ${pend.length?`<div class="sub"><a href="#pendientes" class="tag yellow"
+        style="text-decoration:none">${ico('warning','sm')}${bs(S.pendiente_bs)} Bs sin
+        identificar — este número todavía no los cuenta</a></div>`:''}
+    </div>
+    <div class="datos">
+      <div class="dato">
+        <p class="label">Llevas gastado</p>
+        <p class="v ${est}">${pc(gastado/total)}</p>
+        <p class="help">${bs(gastado)} de ${bs(total)} Bs</p>
+        <div class="pbar" style="margin-top:8px;width:130px">
+          <i style="width:${Math.min(gastado/total*100,100)}%;background:${dvz}"></i></div>
+      </div>
+      <div class="dato">
+        <p class="label">Tu presupuesto da</p>
+        <p class="v mini">${bs(compromiso)}<small style="font-size:.6em"> Bs/día</small></p>
+        <p class="help">${sacrifica?'gastar más y llegas igual, pero sin ahorrar'
+          :'y la caja aguanta ese ritmo'}</p>
+      </div>
+      <div class="dato">
+        <p class="label">Colchón</p>
+        <p class="v mini ${S.colchon.actual?'ok':''}">${usd(S.colchon.actual)}</p>
+        <p class="help">de ${usd(S.colchon.meta)} · faltan ${usd(S.colchon.falta)}</p>
+      </div>
+      ${donut(gastado/total, cy.dia/cy.largo, dvz, 96)}
+    </div>
+  </section>
+
+  <!-- ═══ 1b. LO YA DECIDIDO — explica por qué el número de arriba es ese ═══ -->
+  ${hayExc?`
+  <div class="grid" id="agenda">
+    <div class="t p20 c12">
+      <div class="th">${ico('cal','sm')}<h2>Ya decidido</h2>
+        <span class="r"><span class="tag ${diarioReal<PISO?'red':'yellow'}">${bs(exc.reservado_bs)} Bs
+          · ${usd(exc.reservado_usd)}</span></span></div>
+      <p class="cap">Gastos con fecha y monto que ya decidiste. Están apartados: el número de
+        arriba ya no los promete. Lo excepcional se presupuesta, lo diario se controla.</p>
+      <table><tbody>
+        ${excItems.map(i=>`<tr>
+          <td style="width:1%;white-space:nowrap">
+            <span class="tag ${i.dias_faltan<=7?'yellow':''}">${i.dias_faltan===0?'hoy'
+              :i.dias_faltan===1?'mañana':`en ${i.dias_faltan} días`}</span></td>
+          <td><b>${esc(i.nombre)}</b><br><span class="help">${fecha(i.fecha)}${
+            i.nota?` · ${esc(i.nota)}`:''}</span>${
+            i.pagado_bs>0?`<br><span class="help" style="color:var(--ok-text)">
+              ${ico('check','xs')} pagado ${bs(i.pagado_bs)} de ${bs(i.bs)} Bs${
+              i.saldado?' — completo':''}</span>`:''}</td>
+          <td class="num" style="text-align:right;white-space:nowrap">
+            ${i.pagado_bs>0
+              ? `<b>${bs(i.restante_bs)} Bs</b><br><span class="help">falta apartar</span>`
+              : `<b>${bs(i.bs)} Bs</b><br><span class="help">${usd(i.usd)}</span>`}</td>
+        </tr>`).join('')}
+      </tbody></table>
+      ${exc.veredicto?`<p class="cap" style="margin-top:14px;padding-top:14px;
+        border-top:1px solid var(--border-subtle)">${ico('warning','sm')}
+        <b>Veredicto del 27-jul:</b> ${esc(exc.veredicto)}</p>`:''}
+    </div>
+  </div>`:''}
+
+  <!-- ═══ 2. LA COLA DE TRABAJO — antes que cualquier gráfico ═══ -->
+  <div class="grid" id="pendientes">
+    <div class="t p20 c12">
+      <div class="th">${ico('inbox','sm')}<h2>Por identificar</h2>
+        <span class="r">${pend.length
+          ?`<span class="tag yellow">${pend.length} ${pend.length===1?'movimiento':'movimientos'}
+             · ${bs(S.pendiente_bs)} Bs</span>`
+          :`<span class="tag green">${ico('check','sm')}al día</span>`}</span></div>
+      <p class="cap">${pend.length
+        ? `Wallbit ve que la plata salió, no en qué se fue. Un toque en la categoría y queda
+           anotado para siempre — no se vuelve a preguntar por el mismo movimiento.`
+        : `Acá caen los movimientos que el sistema no supo clasificar. Se resuelven de a un toque.`}</p>
+      ${cola(S)}
+    </div>
+  </div>
+
+  <!-- ═══ 3. ¿CUÁNTO TENGO? ═══ -->
+  <div class="grid">
+    <div class="t c3">
+      <div class="th">${ico('bank','sm')}<p class="label" style="margin:0">Tienes en total</p></div>
+      <p class="plata jefe">${usd(S.patrimonio.neto)}</p>
+      <p class="help">${S.deuda.cerrada?'sin deudas: todo esto es tuyo'
+        :'todo lo tuyo, ya restando lo que debes'}</p>
+    </div>
+    <div class="t c3">
+      <div class="th">${ico('growth','sm')}<p class="label" style="margin:0">Invertido</p></div>
+      <p class="plata">${usd(S.patrimonio.invertido)}</p>
+      <p class="help">trabajando por su cuenta · no lo toques</p>
+    </div>
+    <div class="t c3">
+      <div class="th">${ico('money','sm')}<p class="label" style="margin:0">Disponible</p></div>
+      <p class="plata">${usd(S.patrimonio.liquido)}</p>
+      <p class="help">plata que puedes usar hoy mismo</p>
+    </div>
+    <div class="t c3">
+      <div class="th">${ico('down2','sm')}<p class="label" style="margin:0">Gastado este mes</p></div>
+      <p class="plata">${bs(S.patrimonio.gastado_ciclo_bs)}<small>Bs</small></p>
+      <p class="help">en ${cy.dia} días · ${S.n_movimientos} por Wallbit${
+        S.patrimonio.gastado_fuera_bs?` + ${bs(S.patrimonio.gastado_fuera_bs)} por banco`:''}</p>
+    </div>
+  </div>
+
+  <!-- ═══ 4. CÓMO VAS GASTANDO ═══ -->
+  <div class="grid" id="gasto">
+    <div class="t p20 c7">
+      <div class="th">${ico('growth','sm')}<h2>Cómo vas gastando</h2>
+        <span class="r"><span class="tag ${tag}">${ico(iEst,'sm')}${rot}</span></span></div>
+      <p class="cap">La línea gris es el ritmo que aguanta el mes. La de color eres tú.
+        La punteada del final es dónde acabas si sigues así.</p>
+      ${graficoConsumo(S)}
+      ${sacrifica?`<div class="notif">${ico('warning','sm')}<span>Si gastas más de
+        <b>${bs(compromiso)} Bs al día</b> llegas al sueldo, pero <b>sin ahorrar nada</b>
+        este mes.</span></div>`:''}
+    </div>
+    <div class="t p20 c5">
+      <div class="th">${ico('pie','sm')}<h2>En qué se fue</h2></div>
+      <p class="cap">De mayor a menor.</p>
+      <div class="pbar">${cats.map(([,v],i)=>
+        `<i style="width:${v/totCat*100}%;background:var(${D[i%8]})"></i>`).join('')}</div>
+      <table style="margin-top:12px"><tbody>${cats.map(([n,v],i)=>`
+        <tr><td class="ic">${ico(icoCat(n),'xs')}</td>
+          <td><span class="sw" style="background:var(${D[i%8]})"></span>${esc(n)}</td>
+          <td class="r help" style="font-family:var(--mono)">${pc(v/totCat)}</td>
+          <td class="r num">${bs(v)}</td></tr>`).join('')}</tbody>
+        <tfoot><tr><td></td><td>Total</td><td></td><td class="r num">${bs(totCat)} Bs</td></tr></tfoot></table>
+      <div class="th" style="margin-top:18px">${ico('column','sm')}<h2>Día por día</h2></div>
+      ${graficoDiario(S)}
+    </div>
+  </div>
+
+  <!-- ═══ 5. MOVIMIENTOS ═══ -->
+  <div class="grid" id="movimientos">
+    <div class="t p20 c12">
+      <div class="th">${ico('receipt','sm')}<h2>Todo lo que gastaste</h2>
+        <span class="r"><span class="fuente">
+          <svg class="wb" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-wallbit"/></svg>
+          importado de <b>Wallbit</b></span></span></div>
+      <p class="cap">${(S.movimientos||[]).length} movimientos que se capturan solos:
+        cada QR y cada cargo de tarjeta, con hora, billetera y categoría. Nada se escribe
+        a mano. El total del día va en rojo si pasó tu tope de ${bs(total/cy.largo)} Bs.</p>
+      ${(cj.retiros_sin_identificar||[]).length?`<div class="notif">${ico('warning','sm')}<span>
+        Saliste <b>${bs(cj.retirado_sin_identificar_bs)} Bs</b> a tu banco en
+        ${cj.retiros_sin_identificar.length} ${cj.retiros_sin_identificar.length===1?'retiro':'retiros'}
+        y no está anotado en qué terminaron: ese monto <b>no cuenta como gasto</b> todavía.
+        <a href="#pendientes">Resuélvelo arriba</a> — son ${cj.retiros_sin_identificar.length}
+        toques.</span></div>`:''}
+      ${registro(S)}
+    </div>
+  </div>
+
+  <!-- ═══ 6. CUENTAS · COLCHÓN · METAS ═══ -->
+  <div class="grid" id="cuentas">
+    <div class="t p20 c5">
+      <div class="th">${ico('bank','sm')}<h2>Dónde está tu plata</h2></div>
+      <p class="cap">${ctas.length} cuentas.</p>
+      <div class="pbar">${ctas.map((c,i)=>
+        `<i style="width:${c.usd/totC*100}%;background:var(${D[i%8]})"></i>`).join('')}</div>
+      <table style="margin-top:12px"><tbody>${ctas.map((c,i)=>`
+        <tr><td class="ic">${ico(c.tipo==='invertido'?'growth':'money','xs')}</td>
+          <td><span class="sw" style="background:var(${D[i%8]})"></span>${esc(c.nombre)}
+            ${c.tipo==='invertido'?'<span class="sub" style="padding-left:21px">invertido</span>':''}</td>
+          <td class="r help" style="font-family:var(--mono)">${pc(c.usd/totC)}</td>
+          <td class="r num">${usd(c.usd)}</td></tr>`).join('')}
+        ${S.deuda.restante?`<tr><td class="ic">${ico('down2','xs')}</td>
+          <td><span class="sw" style="background:var(--support-error)"></span>Lo que debes</td>
+          <td></td><td class="r num" style="color:var(--err-text)">−${usd(S.deuda.restante)}</td></tr>`:''}
+        </tbody>
+        <tfoot><tr><td></td><td>Tuyo de verdad</td><td></td>
+          <td class="r num">${usd(S.patrimonio.neto)}</td></tr></tfoot></table>
+    </div>
+
+    <!-- Los saldos que la API no ve se corrigen ACÁ. Si para arreglar un número hay que
+         abrir un archivo JSON en el editor, el número se queda viejo para siempre. -->
+    <div class="t p20 c4" id="saldos">
+      <div class="th">${ico('edit','sm')}<h2>Saldos a mano</h2>
+        <span class="r"><span class="tag gray">${(S.cuentas_manuales||[]).length} cuentas</span></span></div>
+      <p class="cap">Wallbit no ve estas cuentas: el saldo lo pones tú. Cámbialo acá y
+        el patrimonio de arriba se recalcula.</p>
+      <table><tbody>${(S.cuentas_manuales||[]).map(c=>`
+        <tr><td class="ic">${ico(c.kind==='invertido'?'growth':'money','xs')}</td>
+          <td>${esc(c.name)}<span class="sub">${c.currency}${
+            c.currency!=='USD'?` · ≈ ${usd(c.usd)}`:''}</span></td>
+          <td class="r"><input class="saldo" type="number" step="0.01" min="0"
+            data-cuenta="${esc(c.name)}" value="${c.amount}"
+            aria-label="Saldo de ${esc(c.name)} en ${c.currency}"></td></tr>`).join('')}
+      </tbody></table>
+      <p style="margin:14px 0 0"><button class="btn" data-guardar-saldos>${ico('check','sm')}
+        Guardar saldos</button></p>
+    </div>
+
+    <div class="t p20 c3" id="metas">
+      <div class="th">${ico('piggy','sm')}<h2>El colchón</h2>
+        <span class="r"><span class="tag ${S.colchon.actual>=S.colchon.meta?'green':'gray'}">${
+          pc(S.colchon.pct)}</span></span></div>
+      <p class="cap">${usd(S.colchon.actual)} de ${usd(S.colchon.meta)}.
+        ${S.colchon.falta?`Faltan ${usd(S.colchon.falta)}${
+          S.colchon.meses_al_ritmo?` — ${S.colchon.meses_al_ritmo} ${
+          S.colchon.meses_al_ritmo===1?'mes':'meses'} al ritmo de ${usd(S.colchon.aporte_plan)}/mes`:''}.`
+        :'Meta cumplida.'}</p>
+      <div class="pbar"><i style="width:${Math.min(S.colchon.pct*100,100)}%;background:var(--support-success)"></i></div>
+      ${S.deuda.cerrada?`<div class="vacio" style="margin-top:14px">${ico('check','sm')}<span>
+        <b>Deuda saldada.</b> Los ${usd(S.deuda.total)} quedaron en cero el
+        ${fecha(S.deuda.fecha_cero||S.hitos.debt_zero)}. Desde ahí el excedente va al colchón.
+        </span></div>`:`
+        <table style="margin-top:12px"><tbody>${S.deuda.acreedores.map(a=>`
+          <tr class="${a.paid?'done':''}"><td class="ic">${ico(a.paid?'check':'arrow','xs')}</td>
+            <td>${esc(a.name)}</td>
+            <td class="r num">${a.paid?'pagado':usd(a.left)}</td></tr>`).join('')}</tbody></table>`}
+      <div class="th" style="margin-top:18px">${ico('arrow','sm')}<h2>Qué te toca hacer</h2></div>
+      <table style="margin-top:6px"><tbody>${acc.map(([i,t,f,v])=>`
+        <tr><td class="ic">${ico(i,'xs')}</td>
+          <td>${t}<span class="sub">${f}</span></td>
+          <td class="r num">${v}</td></tr>`).join('')}</tbody></table>
+      <div class="th" style="margin-top:18px">${ico('flag','sm')}<h2>A dónde vas</h2></div>
+      <table><tbody>${hitos.map(([f,t,d,i])=>{const l=f<=S.hoy; return `
+        <tr><td class="ic">${ico(l?'check':i,'xs')}</td>
+          <td>${t}<span class="sub">${fecha(f)}</span></td>
+          <td class="r"><span class="tag ${l?'green':'gray'}">${l?'Listo':'Falta'}</span></td>
+        </tr>`;}).join('')}</tbody></table>
+    </div>
+  </div>`;
+
+  document.getElementById('pie').innerHTML=
+    `Presupuesto del mes ${bs(pr.techo)} Bs = ${bs(pr.fijos)} de gastos fijos +
+     ${bs(pr.diario_total)} para el día a día · cambio ${S.fx} Bs por dólar<br>
+     Actualizado ${new Date(S.sincronizado).toLocaleString('es-BO',{dateStyle:'short',timeStyle:'short'})}
+     · IBM Carbon Design System v11, tema White` +
+    (S.demo?' · <b>cifras inventadas, no son de nadie</b>':'');
+
+  const links=[...document.querySelectorAll('.rail a')];
+  if(window.IntersectionObserver){
+    const obs=new IntersectionObserver(es=>es.forEach(e=>{
+      if(e.isIntersecting) links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));
+    }),{rootMargin:'-100px 0px -65% 0px'});
+    NAV.forEach(([id])=>{const el=document.getElementById(id); if(el) obs.observe(el);});
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CAPA DE ESCRITURA — la app no sólo muestra: resuelve.
+
+   Todo lo que se escribe va al servidor local, que valida, guarda de forma
+   atómica y REGENERA el estado con el motor. La app nunca recalcula un número
+   por su cuenta: manda el cambio y vuelve a dibujar lo que el motor devolvió.
+   Si no hay servidor (el demo público), los botones siguen ahí y lo dicen.
+   ═══════════════════════════════════════════════════════════════════════ */
+let ACTUAL=DATOS;
+const q=s=>(window.CSS&&CSS.escape)?CSS.escape(s):s;
+
+let elToast=null, tToast=null;
+function toast(msg, tipo='ok', accion){
+  clearTimeout(tToast); if(elToast) elToast.remove();
+  elToast=document.createElement('div');
+  elToast.className='toast'+(tipo==='err'?' err':(tipo==='info'?' info':''));
+  elToast.innerHTML=`<span>${esc(msg)}</span>`;
+  if(accion){
+    const b=document.createElement('button'); b.type='button'; b.textContent=accion.texto;
+    b.onclick=()=>{ elToast.remove(); accion.fn(); };
+    elToast.appendChild(b);
+  }
+  const x=document.createElement('a');
+  x.className='x'; x.href='#'; x.textContent='×'; x.setAttribute('aria-label','cerrar');
+  x.onclick=e=>{ e.preventDefault(); elToast.remove(); };
+  elToast.appendChild(x);
+  document.body.appendChild(elToast);
+  tToast=setTimeout(()=>{ if(elToast) elToast.remove(); }, tipo==='err'?10000:7000);
+}
+
+async function enviar(ruta, cuerpo){
+  const r=await fetch(ruta,{method:'POST', headers:{'Content-Type':'application/json'},
+                            body:JSON.stringify(cuerpo)});
+  let j=null; try{ j=await r.json(); }catch(e){}
+  if(!r.ok) throw new Error((j&&j.error)||`el servidor respondió ${r.status}`);
+  return j;
+}
+
+async function aplicar(ruta, cuerpo, exito, accion){
+  try{
+    const nuevo=await enviar(ruta, cuerpo);
+    if(nuevo && nuevo.hoy){ ACTUAL=nuevo; }        // estado recalculado por el motor
+    render(ACTUAL);
+    toast(exito,'ok',accion);
+  }catch(e){
+    render(ACTUAL);                                // devolver la tarjeta a su sitio
+    toast('No se pudo guardar: '+e.message+'. ¿Está corriendo el servidor?','err');
+  }
+}
+
+/* Traer lo nuevo de Wallbit desde la pantalla.
+
+   El servidor ya sabía hacerlo (`/state?sync=1`) pero nada lo disparaba: había que ir a
+   la terminal a correr el sync. Eso rompía la promesa de que el tablero se opera solo —
+   comprabas algo, abrías la app y no aparecía, sin ninguna pista de por qué. */
+let SYNCANDO=false;
+async function sincronizar(){
+  if(SYNCANDO) return;
+  if(ACTUAL && ACTUAL.demo){
+    toast('Esto es el ejemplo. Con tu cuenta conectada, este botón trae tus movimientos '
+         +'nuevos de Wallbit.','info');
+    return;
+  }
+  const b=document.getElementById('btn-sync');
+  SYNCANDO=true; if(b){ b.classList.add('girando'); b.disabled=true; }
+  try{
+    // /refrescar, no /state: ese devuelve el JSON del motor, que tiene otra forma.
+    const r=await fetch('/refrescar',{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const nuevo=await r.json();
+    const antes=ACTUAL?(ACTUAL.pendientes||[]).length:0;
+    if(nuevo && nuevo.hoy){ ACTUAL=nuevo; render(ACTUAL); }
+    const ahora=(ACTUAL.pendientes||[]).length;
+    const nuevos=ahora-antes;
+    toast(nuevos>0
+      ? `Al día · ${nuevos} movimiento(s) nuevo(s) esperando que digas qué fueron`
+      : 'Al día · nada nuevo desde el último sync','ok');
+  }catch(e){
+    toast('No pude traer los movimientos: '+e.message+'. ¿Está corriendo el servidor?','err');
+  }finally{
+    SYNCANDO=false;
+    const bb=document.getElementById('btn-sync');
+    if(bb){ bb.classList.remove('girando'); bb.disabled=false; }
+  }
+}
+
+function etiquetar(uuid, cat, nota){
+  const p=(ACTUAL.pendientes||[]).find(x=>x.uuid===uuid);
+  if(!p) return;
+  const idExc=EXC_ELEGIDO.get(uuid);
+  const it=idExc?((ACTUAL.excepcionales||{}).items||[]).find(x=>x.id===idExc):null;
+  if(ACTUAL.demo){
+    ACTUAL.pendientes=ACTUAL.pendientes.filter(x=>x.uuid!==uuid);
+    ACTUAL.pendiente_bs=Math.round((ACTUAL.pendiente_bs-p.bs)*100)/100;
+    render(ACTUAL);
+    toast(it?`Ejemplo: "${p.nombre}" quedaría como ${cat} y como pago de ${it.nombre}: `
+            +`lo que falta apartar bajaría ${bs(p.bs)} Bs.`
+           :`Ejemplo: "${p.nombre}" quedaría como ${cat}. Con tus datos esto se guarda en `
+            +`tx-labels.json y no se vuelve a preguntar.`,'info');
+    return;
+  }
+  const card=document.querySelector(`[data-card="${q(uuid)}"]`);
+  if(card) card.classList.add('va');                // se apaga mientras el motor recalcula
+  EXC_ELEGIDO.delete(uuid);
+  aplicar('/label', {uuid, cat, label:p.nombre, fecha:p.fecha, nota,
+                     ...(idExc?{excepcional:idExc}:{})},
+          it?`Guardado · ${cat} · pago de ${it.nombre}, faltan `
+             +`${bs(Math.max(it.restante_bs-p.bs,0))} Bs por apartar`
+            :`Guardado · ${p.nombre} → ${cat}`,
+          {texto:'Deshacer', fn:()=>aplicar('/label',{uuid, accion:'borrar'},
+                                            `Deshecho · ${p.nombre} vuelve a la cola`)});
+}
+
+/* Guardar SÓLO la descripción, sin elegir categoría.
+
+   Son dos trabajos distintos: sólo tú sabes qué fue un movimiento, pero meterlo en la
+   taxonomía es mecánico. Obligarte a las dos cosas a la vez hacía que escribieras la nota,
+   no tocaras categoría, y se perdiera todo al redibujarse la tarjeta. */
+function describir(uuid){
+  const p=(ACTUAL.pendientes||[]).find(x=>x.uuid===uuid);
+  if(!p) return;
+  const inp=document.querySelector(`input[data-nota="${q(uuid)}"]`);
+  const texto=inp?inp.value.trim():'';
+  if(!texto){ toast('Escribe qué fue antes de guardar.','info'); if(inp) inp.focus(); return; }
+  if(ACTUAL.demo){
+    toast(`Ejemplo: quedaría anotado "${texto}". Con tus datos se guarda en tx-labels.json `
+         +`y el movimiento espera ahí hasta clasificarse.`,'info');
+    return;
+  }
+  const card=document.querySelector(`[data-card="${q(uuid)}"]`);
+  if(card) card.classList.add('va');
+  aplicar('/label', {uuid, accion:'describir', nota:texto},
+          `Anotado · ${p.nombre}`,
+          {texto:'Borrar nota', fn:()=>aplicar('/label',{uuid, accion:'describir', nota:''},
+                                               `Nota borrada · ${p.nombre}`)});
+}
+
+/* "Es parte de algo ya decidido" NO es una categoría: es una marca que se combina con
+   ella. Un pasaje sigue siendo Transporte; lo que cambia es que además baja lo que falta
+   apartar para el viaje. Por eso se selecciona acá y se envía junto con la categoría, en
+   un solo guardado — dos pasos separados serían dos oportunidades de olvidar el segundo.
+
+   Vive fuera del estado porque la tarjeta se redibuja entera en cada cambio. */
+const EXC_ELEGIDO = new Map();          // uuid -> id del excepcional
+
+function marcarExcepcional(uuid, idExc){
+  const previo = EXC_ELEGIDO.get(uuid);
+  if(previo === idExc) EXC_ELEGIDO.delete(uuid);   // volver a tocarlo lo deselecciona
+  else EXC_ELEGIDO.set(uuid, idExc);
+  document.querySelectorAll(`button[data-exc][data-uuid="${q(uuid)}"]`).forEach(b=>{
+    b.classList.toggle('on', b.dataset.exc === EXC_ELEGIDO.get(uuid));
+  });
+}
+
+async function guardarSaldos(btn){
+  const previos=new Map((ACTUAL.cuentas_manuales||[]).map(c=>[c.name,c.amount]));
+  const cambios=[...document.querySelectorAll('input[data-cuenta]')]
+    .map(i=>({name:i.dataset.cuenta, amount:parseFloat(i.value)}))
+    .filter(c=>isFinite(c.amount) && previos.has(c.name)
+               && Math.abs(c.amount-previos.get(c.name))>1e-9);
+  if(!cambios.length){ toast('No cambiaste ningún saldo.','info'); return; }
+  if(ACTUAL.demo){
+    toast('Ejemplo: con tus datos esto reescribe manual-balances.json y recalcula tu patrimonio.','info');
+    return;
+  }
+  btn.disabled=true;
+  await aplicar('/manual-balances', {accounts:cambios},
+                `${cambios.length} ${cambios.length===1?'saldo actualizado':'saldos actualizados'}`);
+}
+
+/* Un solo oyente para toda la app: el HTML se redibuja entero en cada cambio y los
+   listeners colgados de cada botón se perderían. */
+document.addEventListener('click', ev=>{
+  const cat=ev.target.closest('button[data-cat]');
+  if(cat){
+    const u=cat.dataset.uuid;
+    const inp=document.querySelector(`input[data-nota="${q(u)}"]`);
+    etiquetar(u, cat.dataset.cat, inp?inp.value.trim():'');
+    return;
+  }
+  const gn=ev.target.closest('button[data-guardarnota]');
+  if(gn){ describir(gn.dataset.guardarnota); return; }
+  const ex=ev.target.closest('button[data-exc]');
+  if(ex){ marcarExcepcional(ex.dataset.uuid, ex.dataset.exc); return; }
+  const mas=ev.target.closest('button[data-mas]');
+  if(mas){
+    const s=document.querySelector(`[data-resto="${q(mas.dataset.mas)}"]`);
+    if(s){ s.style.display='flex'; mas.remove(); }
+    return;
+  }
+  const g=ev.target.closest('button[data-guardar-saldos]');
+  if(g){ guardarSaldos(g); return; }
+});
+
+if(ACTUAL) render(ACTUAL);
+else document.getElementById('app').innerHTML=
+  `<div class="grid"><div class="t p20 c12"><p class="help">Cargando tus datos…</p></div></div>`;
+
+(async()=>{
+  for(const f of ['state.json','demo.json']){
+    try{ const r=await fetch(f,{cache:'no-store'});
+         if(r.ok){ ACTUAL=await r.json(); render(ACTUAL); return; } }catch(e){}
+  }
+  if(!ACTUAL) document.getElementById('app').innerHTML=
+    `<div class="grid"><div class="t p20 c12"><div class="notif">
+       <span>No encontré <b>state.json</b> ni <b>demo.json</b>. Genera el estado con
+       <b>visor-data.py</b> y abre esta página desde el servidor, no con doble clic.</span>
+     </div></div></div>`;
+})();
+
+let t; addEventListener('resize',()=>{clearTimeout(t); t=setTimeout(()=>{if(ACTUAL)render(ACTUAL)},180)});
+
+/* Enter dentro de la nota = guardar. Es el reflejo de cualquiera al terminar de escribir;
+   si no hiciera nada, el botón de al lado tampoco lo salvaría de perder el texto. */
+document.addEventListener('keydown', ev=>{
+  if(ev.key!=='Enter') return;
+  const inp=ev.target.closest('input.nota[data-nota]');
+  if(!inp) return;
+  ev.preventDefault();
+  describir(inp.dataset.nota);
+});
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ONBOARDING
+
+   Un tablero de finanzas tiene un problema de arranque: cada número es una
+   decisión de diseño («¿por qué 182 y no 298?») y sin explicarla el que llega
+   ve cifras sueltas y se va. Así que el recorrido no cuenta qué hace la app —
+   cuenta POR QUÉ cada número está calculado como está.
+
+   Va contra la pantalla real: cada paso hace scroll a su sección y la resalta.
+   Los ejemplos salen de los datos que están cargados, no de textos fijos: si
+   estás viendo tus propias cifras, el recorrido te habla de las tuyas.
+   ════════════════════════════════════════════════════════════════════════════ */
+const TOUR = (S) => {
+  const n  = (x, u) => `<b>${x==null?'—':bs(x)} ${u||'Bs'}</b>`;
+  const cj = S.caja||{}, ex = S.excepcionales||{}, co = S.colchon||{}, pe = S.pendientes||[];
+  const conReserva = ex.items && ex.items.length;
+  return [
+  {sec:null, tit:'Esto responde una sola pregunta',
+   cuerpo:`La mayoría de las apps de finanzas te dicen en qué gastaste <b>el mes pasado</b>.
+     Útil para el arrepentimiento, inútil para decidir hoy.<br><br>
+     Esta contesta <b>cuánto puedes gastar hoy sin arruinar el mes</b>, y lo hace con la plata
+     que de verdad te queda. Un minuto: te muestro cómo se lee cada parte, y por qué está
+     calculada así.`},
+
+  {sec:null, tit:'Se maneja desde dos lados, y conviene saber cuál',
+   cuerpo:`No son dos programas: es el mismo sistema con dos puertas, y cada una sirve para
+     algo distinto.
+     <span class="dato">
+       <b>Tu agente</b> (Claude Code, Codex) — lo instala, lo conecta a tu cuenta y lo
+       gobierna. Ahí le hablas: <i>«¿me alcanza para el viaje?»</i>, <i>«clasifica lo que
+       anoté»</i>, <i>«¿por qué bajó mi número?»</i>. Es lo que un tablero no puede hacer:
+       responder.<br><br>
+       <b>Esta pantalla</b> — el día a día, a toques. Ver el número, decir qué fue un gasto,
+       corregir un saldo. Sin escribir un comando.
+     </span>
+     Las dos corren <b>en tu computadora</b>. Esto no vive en internet ni hay una cuenta que
+     crear: el servidor es tuyo, en <code>localhost</code>, y tus datos financieros nunca salen
+     de tu máquina. Como contrapartida, el tablero se abre donde esté corriendo — no desde el
+     teléfono.<br><br>
+     Regla simple: <b>si es una pregunta, al agente; si es un toque, acá.</b> Los dos
+     escriben en los mismos archivos, así que lo que hagas en uno lo ve el otro al instante.`},
+
+  {sec:null, tit:'Los dos botones de arriba', icono:'refresh',
+   cuerpo:`Arriba a la derecha hay dos, y hacen falta más de lo que parece.
+     <span class="dato">
+       <b>↻ Traer movimientos</b> — le pide a Wallbit lo nuevo y recalcula todo. Si compraste
+       algo hace un rato y no aparece, es esto lo que falta. No hace falta ir a la terminal.<br><br>
+       <b>? Cómo se lee</b> — vuelve a abrir este recorrido cuando quieras.
+     </span>
+     Y dentro del tablero vas a ver más botones: cada categoría de la cola, «es parte de algo
+     ya decidido», los saldos editables. <b>No son decoración: esta app escribe.</b> Cada toque
+     guarda en tu archivo y vuelve a correr el motor.`},
+
+  {sec:'hoy', tit:'El número grande, y por qué no es tu saldo',
+   cuerpo:`Tu saldo no es plata gastable: adentro hay deuda por pagar, gastos fijos que
+     todavía no cayeron y tu fondo de emergencia. El número de arriba ya les restó todo eso
+     y dividió lo que sobra entre los días que faltan para tu próximo sueldo.
+     <span class="dato">Aquí: quedan ${n(cj.libre_bs)} libres para ${'' + (cj.dias_restantes||0)} días
+     → ${n(cj.diario_a_cero)} por día.</span>`},
+
+  {sec:'agenda', tit:'Lo que ya decidiste no se cuenta dos veces',
+   cuerpo:`Un cumpleaños o un viaje no son indisciplina: son gastos <b>decididos</b>. Si compiten
+     con el número diario, cualquier mes con un evento se siente como un fracaso.<br><br>
+     Se apartan antes de repartir el resto. Eso baja tu número diario, pero lo vuelve verdadero:
+     es lo que puedes gastar <b>y además</b> llegar a lo que ya prometiste.
+     ${conReserva ? `<span class="dato">Aquí hay ${n(ex.reservado_bs)} apartados:
+       el diario baja de ${n(cj.diario_a_cero)} a ${n(ex.diario_con_reserva)}.</span>` : ''}`},
+
+  {sec:'pendientes', tit:'Acá se opera, no se mira',
+   cuerpo:`Wallbit ve que sacaste plata al banco, pero no en qué terminó. Si nadie lo anota,
+     al mes tienes miles «sin identificar» y el gasto del mes miente por ese monto.<br><br>
+     Por eso la cola va <b>arriba de todo</b>, antes que cualquier gráfico: un toque en la
+     categoría y queda guardado para siempre. Ese movimiento no se vuelve a preguntar.<br><br>
+     Y si no sabes en qué casilla va, <b>escribe con tus palabras qué fue y dale Guardar</b>.
+     Sólo tú sabes eso, y lo sabes ahora; encasillarlo es mecánico y se lo puedes dejar a tu
+     agente después (<i>«clasifica lo que anoté»</i>).
+     ${pe.length ? `<span class="dato">Ahora mismo: ${pe.length} movimiento(s) esperando,
+       ${n(S.pendiente_bs)} sin explicar.</span>` : ''}`},
+
+  {sec:'gasto', tit:'Vas ganando o vas perdiendo',
+   cuerpo:`La curva de lo que llevas gastado contra la línea del plan. Lo que importa no es
+     el total, es <b>la pendiente</b>: si tu curva sube más rápido que la línea, el problema
+     ya empezó y todavía estás a tiempo.<br><br>
+     Debajo, en qué se fue: casi siempre la sorpresa no es el gasto grande que recuerdas,
+     sino la suma de los chicos que no.`},
+
+  {sec:'movimientos', tit:'Cada gasto con su hora',
+   cuerpo:`El registro completo, día por día. Lleva la <b>hora local</b> a propósito: la API
+     sella todo en UTC, y sin convertir, una compra de las nueve de la noche aparece al día
+     siguiente y no la reconoces.<br><br>
+     La hora es la mitad de la memoria de un gasto — «el almuerzo», «la salida del viernes».`},
+
+  {sec:'cuentas', tit:'Todo tu dinero, no sólo el de Wallbit',
+   cuerpo:`Wallbit ve su propia cuenta. Tu banco local, tu exchange y lo que tengas en otro
+     lado los agregas acá a mano y se editan en esta misma pantalla.<br><br>
+     La distinción que importa: <b>líquido</b> es lo que puedes gastar hoy; <b>invertido</b>
+     está trabajando y no entra al número diario.`},
+
+  {sec:'metas', tit:'El colchón no es saldo',
+   cuerpo:`Tu fondo de emergencia está apartado del número diario. Si siguiera contando como
+     plata disponible no sería un ahorro, sería un saldo — y un saldo que puedes tocar se
+     termina tocando.
+     <span class="dato">Colchón: ${co.actual!=null?`$${bs(co.actual)} de $${bs(co.meta)}`:'—'}.
+     Está fuera de lo gastable, a propósito.</span>`},
+
+  {sec:null, tit:'Para conectar tu propia cuenta', icono:'key',
+   cuerpo:`Lo que estás viendo son datos de ejemplo. Para que muestre <b>tu</b> plata hace
+     falta una sola cosa: tu <b>API key de Wallbit</b>.
+     <span class="dato">
+       1. Entra a <a href="https://developer.wallbit.io/dashboard/" target="_blank" rel="noopener noreferrer">developer.wallbit.io/dashboard</a><br>
+       2. Inicia sesión y crea una key. Si te deja elegir permisos, dale <b>solo lectura</b>:
+          esto nunca escribe en tu cuenta.<br>
+       3. <b>Cópiala en ese momento</b> — Wallbit la muestra una sola vez.<br>
+       4. Abre el proyecto en tu agente y dile <b><code>/instalar</code></b>. Él te la pide,
+          mide tus últimos 35 días reales y te propone el techo desde ahí.
+     </span>
+     Después de eso ya no vuelves a la terminal: refrescas con <b>↻</b> y operas desde acá.<br><br>
+     ¿Todavía no tienes cuenta en Wallbit? Entonces esto no es para ti todavía: lee de tu
+     cuenta, no reemplaza al banco.`},
+  ];
+};
+
+(function onboarding(){
+  const $  = (id) => document.getElementById(id);
+  const caja = $('tour'), VISTO = 'miplata_tour_visto';
+  let pasos = [], i = 0, foco = null;
+
+  const limpiar = () => { if(foco){ foco.classList.remove('tour-foco'); foco = null; } };
+
+  function pintar(){
+    const p = pasos[i];
+    limpiar();
+    $('tour-paso').textContent = `Paso ${i+1} de ${pasos.length}`;
+    $('tour-tit').textContent  = p.tit;
+    $('tour-cuerpo').innerHTML = p.cuerpo;
+    $('tour-puntos').innerHTML = pasos.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('');
+    $('tour-antes').disabled   = i === 0;
+    $('tour-sig').textContent  = i === pasos.length-1 ? 'Entendido' : 'Siguiente';
+    if(p.sec){
+      const el = document.getElementById(p.sec);
+      if(el){
+        foco = el; el.classList.add('tour-foco');
+        el.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    } else {
+      scrollTo({top:0, behavior:'smooth'});
+    }
+  }
+
+  function abrir(){
+    if(!ACTUAL) return;
+    pasos = TOUR(ACTUAL); i = 0;
+    caja.hidden = false;
+    document.body.classList.add('tour-abierto');
+    pintar();
+    $('tour-sig').focus();
+  }
+  function cerrar(){
+    limpiar(); caja.hidden = true;
+    document.body.classList.remove('tour-abierto');
+    try{ localStorage.setItem(VISTO,'1'); }catch(e){}
+  }
+
+  $('btn-tour').addEventListener('click', abrir);
+  $('btn-sync').addEventListener('click', sincronizar);
+  $('tour-sig').addEventListener('click', ()=>{ i<pasos.length-1 ? (i++, pintar()) : cerrar(); });
+  $('tour-antes').addEventListener('click', ()=>{ if(i>0){ i--; pintar(); } });
+  caja.addEventListener('click', (e)=>{ if(e.target.closest('[data-cerrar]')) cerrar(); });
+  addEventListener('keydown', (e)=>{
+    if(caja.hidden) return;
+    if(e.key==='Escape')     cerrar();
+    if(e.key==='ArrowRight') $('tour-sig').click();
+    if(e.key==='ArrowLeft')  $('tour-antes').click();
+  });
+
+  // Primera visita: se abre solo, pero sólo cuando ya hay datos que señalar.
+  let visto = true;
+  try{ visto = localStorage.getItem(VISTO) === '1'; }catch(e){}
+  if(!visto){
+    const esperar = setInterval(()=>{
+      if(ACTUAL && document.getElementById('hoy')){ clearInterval(esperar); abrir(); }
+    }, 200);
+    setTimeout(()=>clearInterval(esperar), 8000);
+  }
+})();
+</script>

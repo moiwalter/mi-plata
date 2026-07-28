@@ -1,0 +1,20 @@
+{
+  "_meta": "Cuentas que la API de Wallbit NO ve (banco local, exchange, efectivo). Copia a ../manual-balances.json. kind: 'liquido' = puedes gastarlo hoy · 'invertido' = está trabajando.",
+  "updated": "2026-01-01",
+  "accounts": [
+    {
+      "name": "Banco local",
+      "amount": 500,
+      "currency": "BOB",
+      "kind": "liquido",
+      "note": "Actualízalo cuando retires de Wallbit."
+    },
+    {
+      "name": "Exchange (cripto)",
+      "amount": 300,
+      "currency": "USD",
+      "kind": "invertido",
+      "note": "Costo, no precio vivo."
+    }
+  ]
+}
